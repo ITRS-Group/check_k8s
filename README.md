@@ -1,1 +1,1 @@
-OP5 Kubernetes check plugin
+OP5 Monitor K8s check plugin
