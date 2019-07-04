@@ -20,25 +20,21 @@ class Monitor:
         raise NagiosWarning(msg)
 
     def pod_status(self, *args, **kwargs):
-        pods = self.client.get_pods(*args, **kwargs)
-        for pod in pods:
+        for pod in self.client.get_pods(*args, **kwargs):
+            meta = dict(type="Pod", name=pod.name)
             if pod.phase != PodPhase.running:
                 self._raise_for_status(
                     ServiceStatus.CRITICAL,
-                    type="Pod",
-                    name=pod.name,
+                    **meta,
                     state=pod.phase,
-                    expected=PodPhase.running.value
+                    expected=PodPhase.running.value,
                 )
             elif set(self.POD_CONDS_HEALTHY) >= set(pod.conditions):
                 self._raise_for_status(
                     ServiceStatus.CRITICAL,
-                    type="Pod",
-                    name=pod.name,
+                    **meta,
                     state=pod.conditions,
-                    expected=self.POD_CONDS_HEALTHY
+                    expected=self.POD_CONDS_HEALTHY,
                 )
 
             logging.debug("OK: Pod {0} looks healthy".format(pod.name))
-
-        # return (dict(running=0) for pod in self._get_pods())
