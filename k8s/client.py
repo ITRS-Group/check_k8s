@@ -29,7 +29,7 @@ class Client:
         path = ""
 
         for part in parts:
-            path = f"/{path}/{part}"
+            path = "/{0}/{1}".format(path, part)
 
         return re.sub(r"/+", "/", path.rstrip("/"))
 
