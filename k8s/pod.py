@@ -20,6 +20,7 @@ class Pod:
         status = data["status"]
 
         self.name = data["metadata"]["name"]
+        self.meta = dict(type="Pod", name=self.name)
         self.containers = [Pod.Container(c) for c in status["containerStatuses"]]
         self.conditions = [c["type"] for c in status["conditions"] if c["status"] == "True"]
         self.phase = PodPhase(status["phase"])

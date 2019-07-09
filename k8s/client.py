@@ -3,20 +3,27 @@ import re
 
 from urllib import request
 
-from .pod import Pod
-
 
 class Client:
-    def __init__(self, *address, use_ssl=True, path_base="/api/v1"):
+    def __init__(self, host, port, use_ssl, path_base="/api/v1"):
         """Client for interacting with a Kubernetes TCP server
 
-        :param address: TCP address (host, port) tuple
-        :param use_ssl: Whether to use SSL, default to true
+        :param host: Kubernetes host
+        :param port: Kubernetes port
+        :param path_base: API base path
+        :param use_ssl: Whether to use SSL
         """
 
-        self.host, self.port = address
-        self._path_base = path_base
+        self.host = host
+        self.port = port
         self.scheme = "https" if use_ssl else "http"
+
+        self.base_url = "{scheme}://{host}:{port}".format(
+            scheme=self.scheme,
+            host=self.host,
+            port=self.port
+        )
+        self.path_base = path_base
 
     @staticmethod
     def build_path(*parts):
@@ -33,18 +40,18 @@ class Client:
 
         return re.sub(r"/+", "/", path.rstrip("/"))
 
-    @property
-    def _base_url(self):
-        return "{scheme}://{host}:{port}".format(scheme=self.scheme, host=self.host, port=self.port)
+    def get(self, resource, namespace=None):
+        """Query the given API resource using HTTP GET
 
-    def get(self, resource, namespace=None, pod_name=None):
-        if namespace:
-            resource = "namespaces", namespace, resource, pod_name or ""
+        :param resource: Resource name (pod, replicaset, etc)
+        :param namespace: Only look within this namespace
+        :return: Response data (dict)
+        """
 
-        url = self._base_url + self.build_path(self._path_base, resource)
+        url = self.base_url + self.build_path(
+            self.path_base,
+            ("namespaces", namespace, resource) if namespace else resource
+        )
+
         response = request.urlopen(url).read()
         return json.loads(response.decode("utf-8"))
-
-    def get_pods(self, **kwargs):
-        for pod_data in self.get("pods", **kwargs).get("items"):
-            yield Pod(pod_data)
