@@ -1,15 +1,31 @@
+import sys
 import logging
 
-from k8s import Client, Monitor
+from urllib.error import URLError
 
-logging.basicConfig(level=logging.DEBUG, format="%(levelname)s:%(message)s")
+from k8s import Client, Monitor, NagiosError, parse_cmdline
 
 
 def main():
-    client = Client("localhost", 8080, use_ssl=False)
-    mon = Monitor(client)
+    args = parse_cmdline(sys.argv[1:])
 
-    mon.pod_status()
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG, format="%(levelname)s:%(message)s")
+
+    monitor = Monitor(
+        client=Client(args.host, args.port, use_ssl=not args.no_ssl)
+    )
+
+    try:
+        result = monitor.check(args.resource, namespace=args.namespace)
+        sys.stdout.write(result)
+    except NagiosError as e:
+        sys.stderr.write(e.message)
+        sys.exit(e.code)
+    except URLError as e:
+        msg = "Server error: {}".format(str(e.reason))
+        sys.stderr.write(msg)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

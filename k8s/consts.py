@@ -1,15 +1,16 @@
 from enum import Enum
 
 
-class ServiceStatus(Enum):
-    """Nagios Service status
-    https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/3/en/pluginapi.html
-    """
+class InputDefault(Enum):
+    """CLI defaults"""
 
-    OK = 0
-    WARNING = 1
-    CRITICAL = 2
-    UNKNOWN = 3
+    timeout = 15.0
+    host = "127.0.0.1"
+    port = 8080
+    no_ssl = False
+    debug = False
+    namespace = None
+    resource = None
 
 
 class ContainerState(Enum):
