@@ -15,6 +15,13 @@ class Monitor:
 
     @classmethod
     def get_mappings(cls):
+        """Resource-name to check-method mappings
+
+        Allows us to store mappings in *one* place, accessible both before and after object instantiation.
+
+        :return: Mappings Dictionary
+        """
+
         return dict(
             pod=cls.check_pods,
             replicaset="replicaset",
@@ -25,6 +32,15 @@ class Monitor:
         )
 
     def check(self, resource, **kwargs):
+        """Dynamic resource checker
+
+        Resolves and executes a Kubernetes check given a resource name.
+
+        :param resource: Resource name
+        :param kwargs: Kwargs to pass along to the actual check
+        :return: Check result
+        """
+
         assert resource in self.mappings, "Unknown resource: {0}".format(resource)
 
         fn = self.mappings[resource]
@@ -46,7 +62,7 @@ class Monitor:
         for pod_data in pods:
             pod = Pod(pod_data)
 
-            # Check Pod's health
+            # Ensure the Pod is in "running" phase
             if pod.phase != PodPhase.running:
                 raise NagiosCritical(
                     self.MSG_UNHEALTHY.format(
@@ -55,7 +71,7 @@ class Monitor:
                         expected=PodPhase.running.value
                     )
                 )
-            # Check Containers' health
+            # Ensure the Pod is healthy
             elif not all(cond in pod.conditions for cond in self.POD_HEALTHY_CONDS):
                 raise NagiosCritical(
                     self.MSG_UNHEALTHY.format(
