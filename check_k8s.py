@@ -3,7 +3,7 @@ import logging
 
 from urllib.error import URLError
 
-from k8s import Client, Monitor, NagiosError, parse_cmdline
+from k8s import Monitor, NagiosError, parse_cmdline
 
 
 def main():
@@ -12,12 +12,10 @@ def main():
     if args.debug:
         logging.basicConfig(level=logging.DEBUG, format="%(levelname)s:%(message)s")
 
-    monitor = Monitor(
-        client=Client(args.host, args.port, use_ssl=not args.no_ssl)
-    )
+    monitor = Monitor(args.host, args.port, use_ssl=not args.no_ssl)
 
     try:
-        result = monitor.check(args.resource, namespace=args.namespace)
+        result = monitor.check_wrapped(args.resource, namespace=args.namespace)
         sys.stdout.write(result)
     except NagiosError as e:
         sys.stderr.write(e.message)

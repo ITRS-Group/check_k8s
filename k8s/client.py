@@ -3,10 +3,12 @@ import re
 
 from urllib import request
 
+import http.client
+
 
 class Client:
     def __init__(self, host, port, use_ssl, path_base="/api/v1"):
-        """Client for interacting with a Kubernetes TCP server
+        """Client for interacting with a Kubernetes HTTP server
 
         :param host: Kubernetes host
         :param port: Kubernetes port
@@ -53,5 +55,9 @@ class Client:
             ("namespaces", namespace, resource) if namespace else resource
         )
 
+        http.client.HTTPConnection.debuglevel = 1
+        print(url)
+
         response = request.urlopen(url).read()
+
         return json.loads(response.decode("utf-8"))

@@ -1,17 +1,28 @@
 import argparse
 
-from .consts import InputDefault
+from enum import Enum
+
 from .monitor import Monitor
 
 
-cmdline_args = [
+class Default(Enum):
+    timeout = 15.0
+    host = "127.0.0.1"
+    port = 8080
+    no_ssl = False
+    debug = False
+    namespace = None
+    resource = None
+
+
+opts = [
     (
         "--host",
         {
             "dest": "host",
             "action": "store",
             "type": str,
-            "default": InputDefault.host.value,
+            "default": Default.host.value,
             "help": "Kubernetes host (default: %(default)s)"
         }
     ),
@@ -21,7 +32,7 @@ cmdline_args = [
             "dest": "port",
             "action": "store",
             "type": int,
-            "default": InputDefault.port.value,
+            "default": Default.port.value,
             "help": "Kubernetes port (default: %(default)s)"
         }
     ),
@@ -31,7 +42,7 @@ cmdline_args = [
             "dest": "timeout",
             "action": "store",
             "type": float,
-            "default": InputDefault.timeout.value,
+            "default": Default.timeout.value,
             "help": "Connection timeout in seconds (default: %(default)s)"
         }
     ),
@@ -40,7 +51,7 @@ cmdline_args = [
         {
             "dest": "no_ssl",
             "action": "store_true",
-            "default": InputDefault.no_ssl.value,
+            "default": Default.no_ssl.value,
             "help": "Disable the use of SSL"
         }
     ),
@@ -49,7 +60,7 @@ cmdline_args = [
         {
             "dest": "debug",
             "action": "store_true",
-            "default": InputDefault.debug.value,
+            "default": Default.debug.value,
             "help": "Enable debug mode"
         }
     ),
@@ -61,7 +72,7 @@ cmdline_args = [
             "type": str,
             "required": True,
             "help": "Resource to monitor",
-            "choices": [r for r in Monitor.get_mappings()]
+            "choices": [r for r in Monitor.mappings]
         }
     ),
     (
@@ -82,7 +93,7 @@ def parse_cmdline(args):
         description="Checks health of a Kubernetes cluster"
     )
 
-    for arg, config in cmdline_args:
-        parser.add_argument(arg, **config)
+    for opt, conf in opts:
+        parser.add_argument(opt, **conf)
 
     return parser.parse_args(args)
