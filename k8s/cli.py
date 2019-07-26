@@ -2,7 +2,7 @@ import argparse
 
 from enum import Enum
 
-from .monitor import Monitor
+from .components import MAPPINGS
 
 
 class Default(Enum):
@@ -72,7 +72,7 @@ opts = [
             "type": str,
             "required": True,
             "help": "Resource to monitor",
-            "choices": [r for r in Monitor.mappings]
+            "choices": list(MAPPINGS)
         }
     ),
     (

@@ -1,21 +1,21 @@
 class NagiosError(Exception):
     code = None
-    prefix = None
+    level = None
 
-    def __init__(self, message):
-        self.message = "{0} - {1}".format(self.prefix, message)
+    def __init__(self, message, **meta):
+        self.message = "{kind} {name}: {0}".format(message, **meta)
 
 
 class NagiosWarning(NagiosError):
     code = 1
-    prefix = "WARNING"
+    level = "WARNING"
 
 
 class NagiosCritical(NagiosError):
     code = 2
-    prefix = "CRITICAL"
+    level = "CRITICAL"
 
 
 class NagiosUnknown(NagiosError):
     code = 3
-    prefix = "UNKNOWN"
+    level = "UNKNOWN"
