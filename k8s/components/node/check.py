@@ -19,13 +19,11 @@ def check_nodes(items):
         node = Resource(item, kind="Node")
 
         for cond in node.conditions:
-            logging.debug(
-                "{kind} {name}: {0} since {1}".format(cond["message"], cond["lastTransitionTime"], **node.meta)
-            )
+            if cond.type == "Ready" and cond.status != "True":
+                raise NagiosCritical(cond.message)
+            elif cond.type != "Ready" and cond.status == "True":
+                raise NagiosWarning(cond.message)
 
-            if cond["type"] == "Ready" and cond["status"] != "True":
-                raise NagiosCritical(cond["message"], **node.meta)
-            elif cond["type"] != "Ready" and cond["status"] == "True":
-                raise NagiosWarning(cond["message"], **node.meta)
+            logging.debug(cond.message)
 
     return "Found {} healthy Nodes".format(len(items))

@@ -1,6 +1,6 @@
 import logging
 
-from k8s.exceptions import NagiosCritical, NagiosWarning, NagiosUnknown
+from k8s.exceptions import NagiosCritical, NagiosWarning
 
 from .resource import Pod
 from .consts import Phase, CONDS_GOOD
@@ -26,19 +26,11 @@ def check_pods(items):
             raise NagiosWarning("{kind} {name} is {0}".format(pod.phase.value, **pod.meta))
 
         for cond in pod.conditions:
-            status_msg = (
-                "{kind} {name}: {status} since {date}".format(
-                    status=cond["type"],
-                    date=cond["lastTransitionTime"],
-                    **pod.meta
-                )
-            )
+            if cond.type in CONDS_GOOD and cond.status != "True":
+                raise NagiosCritical(cond.message)
+            elif cond.type not in CONDS_GOOD and cond.status == "True":
+                raise NagiosWarning(cond.message)
 
-            if cond["type"] in CONDS_GOOD and cond["status"] != "True":
-                raise NagiosCritical(status_msg)
-            elif cond["type"] not in CONDS_GOOD and cond["status"] == "True":
-                raise NagiosWarning(status_msg)
-
-            logging.debug(status_msg)
+            logging.debug(cond.message)
 
     return "Found {} healthy Pods".format(len(items))

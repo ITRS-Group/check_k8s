@@ -1,5 +1,6 @@
 import sys
 import logging
+import traceback
 
 from urllib.error import URLError
 
@@ -42,6 +43,10 @@ def main():
         nagios_msg(NAGIOS_MSG.format(level="CRITICAL", message=e.reason))
         sys.exit(1)
     except Exception as e:
+        if args.debug:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, file=sys.stdout)
+
         nagios_msg(NAGIOS_MSG.format(level="UNKNOWN", message=e))
         sys.exit(2)
 

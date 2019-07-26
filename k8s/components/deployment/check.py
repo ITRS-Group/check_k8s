@@ -27,15 +27,9 @@ def check_deployments(items):
             raise NagiosCritical("Deployment unavailable", **deployment.meta)
 
         for cond in deployment.conditions:
-            if cond["type"] == "Available" and cond["status"] != "True":
-                raise NagiosCritical(cond["reason"], **deployment.meta)
+            if cond.type == "Available" and cond.status != "True":
+                raise NagiosCritical(cond.message)
 
-            logging.debug(
-                "{kind} {name}: {0} since {1}".format(
-                    cond["message"],
-                    cond["lastTransitionTime"],
-                    **deployment.meta
-                )
-            )
+            logging.debug(cond.message)
 
     return "Found {} healthy Deployments".format(len(items))

@@ -1,4 +1,4 @@
-from k8s.resource import Resource
+from k8s.resource import Resource, Condition
 
 from .consts import ContainerState, Phase
 
@@ -19,6 +19,8 @@ class Container:
 class Pod(Resource):
     def __init__(self, data):
         super(Pod, self).__init__(data)
+
+        self._conditions = [Condition(cond, self.meta, text_key="type") for cond in self._status["conditions"]]
 
         self.containers = [Container(c) for c in self._status["containerStatuses"]]
         self.phase = Phase(self._status["phase"])
