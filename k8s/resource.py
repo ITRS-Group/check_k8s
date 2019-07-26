@@ -1,12 +1,14 @@
 class Condition:
     def __init__(self, data, meta, text_key="message"):
+        assert text_key in data, "Invalid text key: {}".format(text_key)
+
         self._meta = meta
         self._data = data
 
         self.type = data["type"]
         self.status = data["status"]
         self.transitioned_at = data["lastTransitionTime"]
-        self.text = data.get(text_key)
+        self.text = data[text_key]
 
     @property
     def message(self):
