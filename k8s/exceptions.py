@@ -3,7 +3,10 @@ class NagiosError(Exception):
     level = None
 
     def __init__(self, message, **meta):
-        self.message = "{kind} {name}: {0}".format(message, **meta)
+        if not meta:
+            self.message = message
+        else:
+            self.message = "{kind} {name}: {0}".format(message, **meta)
 
 
 class NagiosWarning(NagiosError):

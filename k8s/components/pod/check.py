@@ -26,27 +26,19 @@ def check_pods(items):
             raise NagiosWarning("{kind} {name} is {0}".format(pod.phase.value, **pod.meta))
 
         for cond in pod.conditions:
-            if cond["type"] in CONDS_GOOD and cond["status"] != "True":
-                raise NagiosCritical(
-                    "Condition type: {0}, status: {1}".format(
-                        cond["type"],
-                        cond["status"],
-                        **pod.meta,
-                    )
+            status_msg = (
+                "{kind} {name}: {status} since {date}".format(
+                    status=cond["type"],
+                    date=cond["lastTransitionTime"],
+                    **pod.meta
                 )
-            elif cond["type"] not in CONDS_GOOD and cond["status"] == "True":
-                raise NagiosWarning(
-                    "Condition type: {0}, status: {1}".format(
-                        cond["type"],
-                        cond["status"],
-                        **pod.meta,
-                    )
-                )
+            )
 
-            logging.debug("{kind} {name}: {status} since {date}".format(
-                **pod.meta,
-                status=cond["type"],
-                date=cond["lastTransitionTime"]
-            ))
+            if cond["type"] in CONDS_GOOD and cond["status"] != "True":
+                raise NagiosCritical(status_msg)
+            elif cond["type"] not in CONDS_GOOD and cond["status"] == "True":
+                raise NagiosWarning(status_msg)
+
+            logging.debug(status_msg)
 
     return "Found {} healthy Pods".format(len(items))
