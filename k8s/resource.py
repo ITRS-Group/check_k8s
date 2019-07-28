@@ -29,11 +29,14 @@ class ResourceMeta(type):
 
 
 class Resource(metaclass=ResourceMeta):
-    def __init__(self, data, kind=None):
+    def __init__(self, data, kind=None, condition_text_key="message"):
         self._data = data
         self._kind = kind or self.__class__.__name__
         self._status = data["status"]
-        self._conditions = [Condition(cond, self.meta) for cond in self._status["conditions"]]
+        self._conditions = [
+            Condition(cond, self.meta, text_key=condition_text_key)
+            for cond in self._status["conditions"]
+        ]
 
     @property
     def name(self):

@@ -1,6 +1,8 @@
-class NagiosError(Exception):
-    code = None
-    level = None
+from k8s.consts import State
+
+
+class PluginException(Exception):
+    state = None
 
     def __init__(self, message, **meta):
         if not meta:
@@ -9,16 +11,13 @@ class NagiosError(Exception):
             self.message = "{kind} {name}: {0}".format(message, **meta)
 
 
-class NagiosWarning(NagiosError):
-    code = 1
-    level = "WARNING"
+class NagiosWarning(PluginException):
+    state = State.WARNING
 
 
-class NagiosCritical(NagiosError):
-    code = 2
-    level = "CRITICAL"
+class NagiosCritical(PluginException):
+    state = State.CRITICAL
 
 
-class NagiosUnknown(NagiosError):
-    code = 3
-    level = "UNKNOWN"
+class NagiosUnknown(PluginException):
+    state = State.UNKNOWN

@@ -5,8 +5,8 @@ from .node import check_nodes
 
 # Purpose
 # -------
-# 1) Provides an enum for Argparse "Resource choices".
-# 2) Resolves how to obtain health data and how to process it.
+# 1) Provide enum for Argparse "Resource choices"
+# 2) Resolve how to obtain and process health data
 
 MAPPINGS = dict(
     # resource_name, (check_func, is_core)

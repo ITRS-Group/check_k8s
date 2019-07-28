@@ -31,7 +31,7 @@ def build_url(host, port, resource, use_ssl, is_core=True, namespace=None):
 def http_request(url, *args, **kwargs):
     """HTTP Request
 
-    Perform HTTP request and deserialize the response JSON document into a Python dictionary object.
+    Performs a HTTP request and deserializes the response document (JSON) into a Python dictionary object.
 
     :param url: HTTP URL
     :param args: Args to pass along to `urllib.request.urlopen`
