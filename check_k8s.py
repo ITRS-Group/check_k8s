@@ -2,15 +2,17 @@ import sys
 import logging
 import traceback
 
+from collections import namedtuple
 from urllib.error import URLError
 
-from k8s import NagiosError, parse_cmdline, components
+from k8s.components import MAPPINGS
+from k8s.cli import parse_cmdline
 from k8s.utils import build_url, http_request
-from k8s.consts import NAGIOS_MSG
+from k8s.consts import NAGIOS_MSG, State
+from k8s.exceptions import PluginException
 
 
-def nagios_msg(msg, channel=sys.stderr):
-    print(msg, file=channel)
+Output = namedtuple("Output", ["state", "message", "channel"])
 
 
 def main():
@@ -19,7 +21,7 @@ def main():
     if args.debug:
         logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] %(message)s")
 
-    health_check, is_core = components.MAPPINGS[args.resource]
+    health_check, is_core = MAPPINGS[args.resource]
 
     # Build URL using input arguments
     url = build_url(
@@ -35,20 +37,21 @@ def main():
     try:
         response, status = http_request(url)
         result = health_check(response)
-        nagios_msg(NAGIOS_MSG.format(level="OK", message=result), channel=sys.stdout)
-    except NagiosError as e:
-        nagios_msg(NAGIOS_MSG.format(level=e.level, message=e.message))
-        sys.exit(e.code)
+        output = Output(State.OK, result, sys.stdout)
+    except PluginException as e:
+        output = Output(e.state, e.message, sys.stderr)
     except URLError as e:
-        nagios_msg(NAGIOS_MSG.format(level="CRITICAL", message=e.reason))
-        sys.exit(1)
+        output = Output(State.CRITICAL, e.reason, sys.stderr)
     except Exception as e:
         if args.debug:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             traceback.print_tb(exc_traceback, file=sys.stdout)
 
-        nagios_msg(NAGIOS_MSG.format(level="UNKNOWN", message=e))
-        sys.exit(2)
+        output = Output(State.UNKNOWN, e, sys.stderr)
+
+    msg = NAGIOS_MSG.format(state=output.state.name, message=output.message)
+    print(msg, file=output.channel)
+    sys.exit(output.state.value)
 
 
 if __name__ == "__main__":
