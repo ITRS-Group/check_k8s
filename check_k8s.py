@@ -27,7 +27,6 @@ def main():
     url = build_url(
         host=args.host,
         port=args.port,
-        use_ssl=not args.no_ssl,
         resource=args.resource,
         is_core=is_core,
         namespace=args.namespace
@@ -35,7 +34,7 @@ def main():
 
     # Request and check health data
     try:
-        response, status = http_request(url)
+        response, status = http_request(url, token=args.token, insecure=args.insecure)
         result = health_check(response)
         output = Output(State.OK, result, sys.stdout)
     except PluginException as e:

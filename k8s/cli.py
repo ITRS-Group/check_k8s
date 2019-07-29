@@ -8,8 +8,9 @@ from .components import MAPPINGS
 class Default(Enum):
     timeout = 15.0
     host = "127.0.0.1"
-    port = 8080
-    no_ssl = False
+    port = 16443
+    token = None
+    insecure = False
     debug = False
     namespace = None
     resource = None
@@ -24,6 +25,16 @@ opts = [
             "type": str,
             "default": Default.host.value,
             "help": "Kubernetes host (default: %(default)s)"
+        }
+    ),
+    (
+        "--token",
+        {
+            "dest": "token",
+            "action": "store",
+            "type": str,
+            "default": Default.token.value,
+            "help": "Authentication Bearer Token"
         }
     ),
     (
@@ -47,12 +58,12 @@ opts = [
         }
     ),
     (
-        "--no_ssl",
+        "--insecure",
         {
-            "dest": "no_ssl",
+            "dest": "insecure",
             "action": "store_true",
-            "default": Default.no_ssl.value,
-            "help": "Disable the use of SSL"
+            "default": Default.insecure.value,
+            "help": "Continue on insecure SSL connection"
         }
     ),
     (
