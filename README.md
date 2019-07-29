@@ -11,7 +11,6 @@ Usage
 ```
 $ python3 check_k8s.py -h
 
-python3 check_k8s.py -h                                                                                                                                                                 rbw@goris
 usage: check_k8s.py [-h] [--host HOST] [--token TOKEN] [--port PORT]
                     [--timeout TIMEOUT] [--insecure] [--debug] --resource
                     {pods,nodes,deployments} [--namespace NAMESPACE]
