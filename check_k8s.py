@@ -9,7 +9,7 @@ from k8s.components import MAPPINGS
 from k8s.cli import parse_cmdline
 from k8s.utils import build_url, http_request
 from k8s.consts import NAGIOS_MSG, State
-from k8s.exceptions import PluginException
+from k8s.exceptions import PluginException, UnknownState
 
 
 Output = namedtuple("Output", ["state", "message", "channel"])
@@ -41,7 +41,7 @@ def main():
     except PluginException as e:
         output = Output(e.state, e.message, sys.stderr)
     except URLError as e:
-        output = Output(State.CRITICAL, e.reason, sys.stderr)
+        output = Output(State.UNKNOWN, e.reason, sys.stderr)
     except Exception as e:
         if args.debug:
             exc_type, exc_value, exc_traceback = sys.exc_info()
