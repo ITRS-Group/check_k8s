@@ -1,4 +1,4 @@
-check_k8s: Nagios plugin for monitoring Kubernetes Clusters
+check_k8s: Kubernetes plugin for Nagios
 ===
 
 Modular Nagios plugin built using the Python standard library for monitoring Kubernetes Clusters.
@@ -52,4 +52,4 @@ entry points.
 Extending
 ---
 
-Take a look at the [existing components](components) to get started, and check out the [Kubernetes API reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/) for details about the various Kubernetes APIs available.
+Take a look at the [existing components](k8s/components) to get started, and check out the [Kubernetes API reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/) for details about the various Kubernetes APIs available.
