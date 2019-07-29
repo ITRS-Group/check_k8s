@@ -1,5 +1,11 @@
+from k8s.exceptions import UnknownState
+
+
 class Condition:
     def __init__(self, data, meta, text_key="message"):
+        if not len(data):
+            raise UnknownState("No Conditions was returned for {kind} {name}".format(**meta))
+
         assert text_key in data, "Invalid text key: {}".format(text_key)
 
         self._meta = meta

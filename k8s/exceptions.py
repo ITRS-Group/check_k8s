@@ -1,6 +1,10 @@
 from k8s.consts import State
 
 
+class UnknownState(Exception):
+    pass
+
+
 class PluginException(Exception):
     state = None
 
