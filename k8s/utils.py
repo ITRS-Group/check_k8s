@@ -39,12 +39,12 @@ def http_request(url, *args, token=None, insecure=False, **kwargs):
     :return: data, status
     """
 
+    urlopen_opts = {}
+
     if token:
         kwargs["headers"] = dict(
             Authorization="Bearer {}".format(token)
         )
-
-    urlopen_opts = {}
 
     if insecure:
         urlopen_opts.update({
