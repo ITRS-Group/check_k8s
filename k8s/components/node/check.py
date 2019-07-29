@@ -1,7 +1,8 @@
 import logging
 
 from k8s.exceptions import NagiosCritical, NagiosWarning
-from k8s.resource import Resource
+
+from .resource import Node
 
 
 def check_nodes(items):
@@ -16,7 +17,7 @@ def check_nodes(items):
     """
 
     for item in items:
-        node = Resource(item, kind="Node")
+        node = Node(item)
 
         for cond in node.conditions:
             if cond.type == "Ready" and cond.status != "True":
@@ -25,5 +26,8 @@ def check_nodes(items):
                 raise NagiosWarning(cond.message)
 
             logging.debug(cond.message)
+
+        if node.unschedulable:
+            raise NagiosWarning("Node {} is ready, but unschedulable".format(node.name))
 
     return "Found {} healthy Nodes".format(len(items))
