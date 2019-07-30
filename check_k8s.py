@@ -7,9 +7,9 @@ from urllib.error import URLError
 
 from k8s.components import MAPPINGS
 from k8s.cli import parse_cmdline
-from k8s.utils import build_url, http_request
+from k8s.http import build_url, request
 from k8s.consts import NAGIOS_MSG, State
-from k8s.exceptions import PluginException, UnknownState
+from k8s.exceptions import PluginException
 
 
 Output = namedtuple("Output", ["state", "message", "channel"])
@@ -34,7 +34,7 @@ def main():
 
     # Request and check health data
     try:
-        response, status = http_request(url, token=args.token, insecure=args.insecure)
+        response, status = request(url, token=args.token, insecure=args.insecure)
         result = health_check(response)
         output = Output(State.OK, result, sys.stdout)
     except PluginException as e:

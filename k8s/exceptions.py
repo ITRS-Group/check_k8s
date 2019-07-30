@@ -1,10 +1,6 @@
 from k8s.consts import State
 
 
-class UnknownState(Exception):
-    pass
-
-
 class PluginException(Exception):
     state = None
 
@@ -25,3 +21,16 @@ class NagiosCritical(PluginException):
 
 class NagiosUnknown(PluginException):
     state = State.UNKNOWN
+
+
+class MetaNotFound(NagiosUnknown):
+    pass
+
+
+class StatusNotFound(NagiosUnknown):
+    pass
+
+
+class ConditionsNotFound(NagiosUnknown):
+    pass
+

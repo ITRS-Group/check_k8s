@@ -1,12 +1,9 @@
-from k8s.exceptions import UnknownState
+from k8s.exceptions import MetaNotFound, ConditionsNotFound, StatusNotFound
 
 
 class Condition:
-    def __init__(self, data, meta, text_key="message"):
-        if not len(data):
-            raise UnknownState("No Conditions was returned for {kind} {name}".format(**meta))
-
-        assert text_key in data, "Invalid text key: {}".format(text_key)
+    def __init__(self, data, meta, textkey="message"):
+        assert textkey in data, "Invalid text key: {}".format(textkey)
 
         self._meta = meta
         self._data = data
@@ -14,7 +11,7 @@ class Condition:
         self.type = data["type"]
         self.status = data["status"]
         self.transitioned_at = data["lastTransitionTime"]
-        self.text = data[text_key]
+        self.text = data[textkey]
 
     @property
     def message(self):
@@ -25,33 +22,22 @@ class Condition:
         )
 
 
-class ResourceMeta(type):
-    def __call__(cls, *args, **kwargs):
-        resource = super(ResourceMeta, cls).__call__(*args, **kwargs)
-
-        # assert resource.__kind__, "Resource {} must have a __kind__".format(cls)
-
-        return resource
-
-
-class Resource(metaclass=ResourceMeta):
-    def __init__(self, data, kind=None, condition_text_key="message"):
-        self._data = data
+class Resource:
+    def __init__(self, data, kind=None, condition_textkey="message"):
         self._kind = kind or self.__class__.__name__
-        self._status = data["status"]
-        self._conditions = [
-            Condition(cond, self.meta, text_key=condition_text_key)
-            for cond in self._status["conditions"]
-        ]
+        self._data = data
 
-    @property
-    def name(self):
-        return self._data["metadata"]["name"]
+        if "metadata" not in data or not data["metadata"]:
+            raise MetaNotFound("Malformed response: metadata not found for kind {}".format(self._kind))
 
-    @property
-    def meta(self):
-        return dict(kind=self._kind, name=self.name)
+        meta = self.meta = dict(kind=self._kind, name=data["metadata"]["name"])
 
-    @property
-    def conditions(self):
-        return self._conditions
+        if "status" not in data or not data["status"]:
+            raise StatusNotFound("Malformed response: status not found", **meta)
+
+        status = self._status = data["status"]
+
+        if "conditions" not in status or not len(status["conditions"]):
+            raise ConditionsNotFound("No conditions found, cannot check health", **meta)
+
+        self.conditions = [Condition(cond, meta, textkey=condition_textkey) for cond in status["conditions"]]

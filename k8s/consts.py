@@ -1,6 +1,6 @@
 from enum import Enum
 
-NAGIOS_MSG = "{state}: {message}"
+NAGIOS_MSG = "{state} - {message}"
 
 
 class State(Enum):
