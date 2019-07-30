@@ -34,8 +34,7 @@ optional arguments:
 Component system
 ===
 
-The check_k8s plugin comes with a simple component system, which not only simplifies testing and
-provides modularity and maintainability--it also makes extending the plugin with more monitoring features easy as pie.
+The check_k8s plugin comes with a simple component system, making it easy to add support for additional Kubernetes Resources.
 
 Resources
 ---
@@ -45,7 +44,7 @@ Typically, components make use of the `k8s.Resource` class, which provides commo
 Mappings
 ---
 
-The `k8s.components.mappings` are automatically picked up by the CLI as Enums and provides a glue between input data and component
+The `k8s.components.mappings` are automatically picked up by the CLI as Resource Enums and provides a glue between input data and component
 entry points.
 
 Extending
