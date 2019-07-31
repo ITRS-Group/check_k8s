@@ -18,7 +18,7 @@ class Container:
 
 class Pod(Resource):
     def __init__(self, data):
-        super(Pod, self).__init__(data, condition_textkey="type")
+        super(Pod, self).__init__(data)
 
         self.containers = [Container(c) for c in self._status["containerStatuses"]]
         self.phase = Phase(self._status["phase"])

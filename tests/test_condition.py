@@ -23,7 +23,20 @@ def test_message(meta):
         "lastTransitionTime": "2019-07-03T09:25:48Z"
     }
 
-    assert Condition(condition_data, meta).message == "test_kind test_name: <<message>> since 2019-07-03T09:25:48Z"
+    msg = Condition(condition_data, meta).message
+    assert msg == "test_kind test_name: condition MemoryPressure since 2019-07-03T09:25:48Z"
+
+
+def test_message_negative(meta):
+    condition_data = {
+        "type": "Ready",
+        "message": "<<message>>",
+        "status": "False",
+        "lastTransitionTime": "2019-07-03T09:25:48Z"
+    }
+
+    msg = Condition(condition_data, meta).message
+    assert msg == "test_kind test_name: condition not Ready since 2019-07-03T09:25:48Z"
 
 
 def test_textkey_invalid(meta):

@@ -2,7 +2,7 @@ from k8s.exceptions import MetaNotFound, ConditionsNotFound, StatusNotFound
 
 
 class Condition:
-    def __init__(self, data, meta, textkey="message"):
+    def __init__(self, data, meta, textkey="type"):
         assert textkey in data, "Invalid text key: {}".format(textkey)
 
         self._meta = meta
@@ -15,7 +15,8 @@ class Condition:
 
     @property
     def message(self):
-        return "{kind} {name}: {0} since {1}".format(
+        return "{kind} {name}: {0} {1} since {2}".format(
+            "condition" if self.status == "True" else "condition not",
             self.text,
             self.transitioned_at,
             **self._meta
@@ -23,7 +24,7 @@ class Condition:
 
 
 class Resource:
-    def __init__(self, data, kind=None, condition_textkey="message"):
+    def __init__(self, data, kind=None, condition_textkey="type"):
         self._kind = kind or self.__class__.__name__
         self._data = data
 

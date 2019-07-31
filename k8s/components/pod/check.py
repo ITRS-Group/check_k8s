@@ -20,10 +20,10 @@ def check_pods(items):
     for item in items:
         pod = Pod(item)
 
-        if pod.phase != Phase.running:
-            raise NagiosCritical("Unexpected Phase for {kind} {name}: {0}".format(pod.phase.value, **pod.meta))
-        elif pod.phase == Phase.pending:
+        if pod.phase == Phase.pending:
             raise NagiosWarning("{kind} {name} is {0}".format(pod.phase.value, **pod.meta))
+        elif pod.phase != Phase.running and pod.phase != Phase.succeeded:
+            raise NagiosCritical("Unexpected Phase for {kind} {name}: {0}".format(pod.phase.value, **pod.meta))
 
         for cond in pod.conditions:
             if cond.type in CONDS_GOOD and cond.status != "True":
