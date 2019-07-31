@@ -8,7 +8,7 @@ Release: %{op5release}%{?dist}
 License: GPL-2.0
 Group: op5/system-addons
 URL: http://www.op5.com/support
-%global commit 5f0634d502043f8b855ca3b15fdef78e5d86182a
+%global commit 1d01baa4bb82a65e14dbe0dfb5e9936ebe44dc7c
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 Source0: https://github.com/ITRS-Group/system-addons-plugins-op5-check_kubernetes/archive/%{commit}/check_k8s-%{shortcommit}.tar.gz
 Prefix: /opt/plugins
