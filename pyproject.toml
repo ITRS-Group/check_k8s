@@ -3,10 +3,17 @@ name = "check_k8s"
 version = "0.1.0"
 description = "Kubernetes monitoring plugin"
 authors = ["Robert Wikman <rwikman@op5.com>"]
-license = "MIT"
+license = "GPL-2.0"
 
 [tool.poetry.dependencies]
 python = "^3.6"
+
+[tool.poetry.dev-dependencies]
+twine = "^1.13"
+pytest = "^4.4.0"
+pytest-cov = "^2.7.1"
+codecov = "^2.0.15"
+black = { version = "^19.3b0", allows-prereleases = true }
 
 [build-system]
 requires = ["poetry>=0.12"]
