@@ -8,7 +8,7 @@ from .components import MAPPINGS
 class Default(Enum):
     timeout = 15.0
     host = "127.0.0.1"
-    port = 16443
+    port = 6443
     token = None
     insecure = False
     debug = False
