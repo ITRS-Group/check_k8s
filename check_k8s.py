@@ -1,9 +1,10 @@
 import sys
 import logging
 import traceback
+import json
 
 from collections import namedtuple
-from urllib.error import URLError
+from urllib.error import URLError, HTTPError
 
 from k8s.components import MAPPINGS
 from k8s.cli import parse_cmdline
@@ -40,8 +41,9 @@ def main():
     except PluginException as e:
         output = Output(e.state, e.message, sys.stderr)
     except URLError as e:
-        if hasattr(e, "code"):
-            message = "{0} ({1})".format(e.reason, e.code)
+        if isinstance(e, HTTPError):
+            body = json.loads(e.read())
+            message = "{0}: {1}".format(e.code, body.get("message"))
         else:
             message = e.reason
 
