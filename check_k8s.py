@@ -40,7 +40,12 @@ def main():
     except PluginException as e:
         output = Output(e.state, e.message, sys.stderr)
     except URLError as e:
-        output = Output(State.UNKNOWN, e.reason, sys.stderr)
+        if hasattr(e, "code"):
+            message = "{0} ({1})".format(e.reason, e.code)
+        else:
+            message = e.reason
+
+        output = Output(State.UNKNOWN, message, sys.stderr)
     except Exception as e:
         if args.debug:
             exc_type, exc_value, exc_traceback = sys.exc_info()
