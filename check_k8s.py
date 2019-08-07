@@ -40,14 +40,15 @@ def main():
         output = Output(State.OK, result, sys.stdout)
     except PluginException as e:
         output = Output(e.state, e.message, sys.stderr)
+    except HTTPError as e:
+        body = json.loads(e.read())
+        output = Output(
+            State.UNKNOWN,
+            "{0}: {1}".format(e.code, body.get("message")),
+            sys.stderr
+        )
     except URLError as e:
-        if isinstance(e, HTTPError):
-            body = json.loads(e.read())
-            message = "{0}: {1}".format(e.code, body.get("message"))
-        else:
-            message = e.reason
-
-        output = Output(State.UNKNOWN, message, sys.stderr)
+        output = Output(State.UNKNOWN, e.reason, sys.stderr)
     except Exception as e:
         if args.debug:
             exc_type, exc_value, exc_traceback = sys.exc_info()
