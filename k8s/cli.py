@@ -10,6 +10,7 @@ class Default(Enum):
     host = "127.0.0.1"
     port = 6443
     token = None
+    token_file = None
     insecure = False
     debug = False
     namespace = None
@@ -34,7 +35,17 @@ opts = [
             "action": "store",
             "type": str,
             "default": Default.token.value,
-            "help": "Authentication Bearer Token"
+            "help": "Authentication Token"
+        }
+    ),
+    (
+        "--token_file",
+        {
+            "dest": "token_file",
+            "action": "store",
+            "type": str,
+            "default": Default.token.value,
+            "help": "Read Token from file"
         }
     ),
     (
@@ -107,4 +118,12 @@ def parse_cmdline(args):
     for opt, conf in opts:
         parser.add_argument(opt, **conf)
 
-    return parser.parse_args(args)
+    parsed = parser.parse_args(args)
+
+    if parsed.token and parsed.token_file:
+        parser.error("--token and --token_file options are mutually exclusive.")
+    elif parsed.token_file:
+        with open(parsed.token_file) as fh:
+            parsed.token = fh.read().strip()
+
+    return parsed

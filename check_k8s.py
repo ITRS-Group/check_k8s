@@ -17,25 +17,25 @@ Output = namedtuple("Output", ["state", "message", "channel"])
 
 
 def main():
-    args = parse_cmdline(sys.argv[1:])
+    parsed = parse_cmdline(sys.argv[1:])
 
-    if args.debug:
+    if parsed.debug:
         logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] %(message)s")
 
-    health_check, is_core = MAPPINGS[args.resource]
+    health_check, is_core = MAPPINGS[parsed.resource]
 
     # Build URL using input arguments
     url = build_url(
-        host=args.host,
-        port=args.port,
-        resource=args.resource,
+        host=parsed.host,
+        port=parsed.port,
+        resource=parsed.resource,
         is_core=is_core,
-        namespace=args.namespace
+        namespace=parsed.namespace
     )
 
     # Request and check health data
     try:
-        response, status = request(url, token=args.token, insecure=args.insecure)
+        response, status = request(url, token=parsed.token, insecure=parsed.insecure)
         result = health_check(response)
         output = Output(State.OK, result, sys.stdout)
     except PluginException as e:
@@ -50,7 +50,7 @@ def main():
     except URLError as e:
         output = Output(State.UNKNOWN, e.reason, sys.stderr)
     except Exception as e:
-        if args.debug:
+        if parsed.debug:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             traceback.print_tb(exc_traceback, file=sys.stdout)
 
