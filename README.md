@@ -11,7 +11,8 @@ Usage
 ```
 $ python3 check_k8s.py -h
 
-usage: check_k8s.py [-h] [--host HOST] [--token TOKEN] [--port PORT]
+usage: check_k8s.py [-h] [--host HOST] [--token TOKEN]
+                    [--token_file TOKEN_FILE] [--port PORT]
                     [--timeout TIMEOUT] [--insecure] [--debug] --resource
                     {pods,nodes,deployments} [--namespace NAMESPACE]
 
@@ -20,8 +21,10 @@ Checks health of a Kubernetes cluster
 optional arguments:
   -h, --help            show this help message and exit
   --host HOST           Kubernetes host (default: 127.0.0.1)
-  --token TOKEN         Authentication Bearer Token
-  --port PORT           Kubernetes port (default: 16443)
+  --token TOKEN         Authentication Token
+  --token_file TOKEN_FILE
+                        Read Token from file
+  --port PORT           Kubernetes port (default: 6443)
   --timeout TIMEOUT     Connection timeout in seconds (default: 15.0)
   --insecure            Continue on insecure SSL connection
   --debug               Enable debug mode
@@ -29,6 +32,7 @@ optional arguments:
                         Resource to monitor
   --namespace NAMESPACE
                         Look only within this namespace
+
 ```
 
 Component system
