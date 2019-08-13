@@ -5,20 +5,22 @@ Summary: Kubernetes plugin for Nagios
 Name: monitor-plugin-check_k8s
 Version: %{op5version}
 Release: %{op5release}%{?dist}
+Vendor: OP5 AB
 License: GPL-2.0
 Group: op5/system-addons
 URL: http://www.op5.com/support
 Prefix: /opt/plugins
 Requires: python34
+Source: %{name}-%{version}.tar.gz
 BuildRequires: python34
-BuildRoot: %{_tmppath}/check_k8s-%{commit}
+BuildRoot: %{_tmppath}/%{name}-%{version}
 BuildArch: noarch
 
 %description
 Nagios plugin for monitoring Kubernetes Clusters, built using the Python standard library.
 
 %prep
-%setup -q -n check_k8s-%{commit}
+%setup -q -n %{name}-%{version}
 
 %build
 pip install poetry
