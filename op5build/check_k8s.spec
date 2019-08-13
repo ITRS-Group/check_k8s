@@ -13,13 +13,7 @@ Prefix: /opt/plugins
 Requires: python34
 Source: %{name}-%{version}.tar.gz
 BuildRequires: python34
-
-%if 0%{?el6}
-BuildRequires: python-pip
-%else
-BuildRequires: python34-pip
-%endif
-
+BuildRequires: python34-setuptools
 BuildRoot: %{_tmppath}/%{name}-%{version}
 BuildArch: noarch
 
@@ -30,7 +24,8 @@ Nagios plugin for monitoring Kubernetes Clusters, built using the Python standar
 %setup -q -n %{name}-%{version}
 
 %build
-pip install poetry
+easy_install-3.4 pip
+pip3.4 install poetry
 
 # Install build-deps
 poetry update
