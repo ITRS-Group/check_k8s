@@ -24,7 +24,7 @@ Nagios plugin for monitoring Kubernetes Clusters, built using the Python standar
 %setup -q -n %{name}-%{version}
 
 %build
-easy_install-3.4 pip
+easy_install-3.4 --user pip
 pip3.4 install poetry
 
 # Install build-deps
