@@ -28,10 +28,10 @@ easy_install-3.4 --user pip
 python3.4 -m pip install poetry
 
 # Install build-deps
-poetry update
+python3.4 -m poetry update
 
 # Run tests
-poetry run pytest
+python3.4 -m poetry run pytest
 
 # Install scripts with preserved timestamps
 %{__install} -D -p check_k8s.py %{buildroot}/%{plugin_root}/%{check_k8s}
