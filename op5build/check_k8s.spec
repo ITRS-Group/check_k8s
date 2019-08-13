@@ -13,7 +13,13 @@ Prefix: /opt/plugins
 Requires: python34
 Source: %{name}-%{version}.tar.gz
 BuildRequires: python34
+
+%if 0%{?el6}
+BuildRequires: python-pip
+%else
 BuildRequires: python34-pip
+%endif
+
 BuildRoot: %{_tmppath}/%{name}-%{version}
 BuildArch: noarch
 
