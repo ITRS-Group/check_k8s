@@ -26,18 +26,10 @@ Nagios plugin for monitoring Kubernetes Clusters, built using the Python standar
 %setup -q -n %{name}-%{version}
 
 %build
-# Add --user package directory to PATH
-export PATH=/builddir/.local/bin:/builddir/.poetry/bin:$PATH
-
-# Fetch and install poetry
-wget https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
-python3.4 get-poetry.py --preview --yes
-
-# Create venv and install dependencies
-poetry update
-
-# Run tests
-poetry run python -m pytest
+python3.4 -m venv .venv
+source .venv/bin/activate
+python3.4 -m pip install pytest
+python3.4 -m pytest
 
 %{__install} -D -p %{exec_path} %{buildroot}/%{plugin_root}/%{exec_path}
 cp --archive %{pkg_path} %{buildroot}/%{plugin_root}/
