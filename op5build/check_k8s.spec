@@ -1,5 +1,6 @@
 %define plugin_root /opt/plugins
-%define check_k8s check_k8s.py
+%define exec_path check_k8s.py
+%define pkg_path k8s
 
 Summary: Kubernetes plugin for Nagios
 Name: monitor-plugin-check_k8s
@@ -25,7 +26,7 @@ Nagios plugin for monitoring Kubernetes Clusters, built using the Python standar
 
 %build
 easy_install-3.4 --user pip
-python3.4 -m pip install poetry
+python3.4 -m pip install --user poetry
 
 # Install build-deps
 python3.4 -m poetry update
@@ -33,12 +34,13 @@ python3.4 -m poetry update
 # Run tests
 python3.4 -m poetry run pytest
 
-# Install scripts with preserved timestamps
-%{__install} -D -p check_k8s.py %{buildroot}/%{plugin_root}/%{check_k8s}
+%{__install} -D -p %{exec_path} %{buildroot}/%{plugin_root}/%{exec_path}
+cp --archive %{pkg_path} %{buildroot}/%{plugin_root}/
 
 %files
 %defattr(-, monitor, root)
-%attr(755, monitor, root) %{plugin_root}/%{check_k8s}
+%attr(755, monitor, root) %{plugin_root}/%{exec_path}
+%attr(755, monitor, root) %{plugin_root}/%{pkg_path}/*
 
 %clean
 rm -rf %buildroot
