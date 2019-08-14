@@ -15,6 +15,7 @@ Requires: python34
 Source: %{name}-%{version}.tar.gz
 BuildRequires: python34
 BuildRequires: python34-setuptools
+BuildRequires: wget
 BuildRoot: %{_tmppath}/%{name}-%{version}
 BuildArch: noarch
 
