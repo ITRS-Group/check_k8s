@@ -32,7 +32,7 @@ python3.4 -m pip install --user poetry
 python3.4 -m poetry update
 
 # Run tests
-python3.4 -m poetry run pytest
+python3.4 -m poetry run python3.4 -m pytest
 
 %{__install} -D -p %{exec_path} %{buildroot}/%{plugin_root}/%{exec_path}
 cp --archive %{pkg_path} %{buildroot}/%{plugin_root}/
