@@ -15,7 +15,6 @@ Requires: python34
 Source: %{name}-%{version}.tar.gz
 BuildRequires: python34
 BuildRequires: python34-setuptools
-BuildRequires: wget
 BuildRoot: %{_tmppath}/%{name}-%{version}
 BuildArch: noarch
 
@@ -38,6 +37,11 @@ cp --archive %{pkg_path} %{buildroot}/%{plugin_root}/
 %defattr(-, monitor, root)
 %attr(755, monitor, root) %{plugin_root}/%{exec_path}
 %attr(755, monitor, root) %{plugin_root}/%{pkg_path}/*
+%license LICENSE
+%doc README.md
 
 %clean
 rm -rf %buildroot
+
+* Fri Aug 16 2019 Robert Wikman <rwikman@op5.com> - 0.1.0
+- Init
