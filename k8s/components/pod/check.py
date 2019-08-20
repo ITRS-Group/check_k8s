@@ -1,9 +1,7 @@
-import logging
-
 from k8s.exceptions import NagiosCritical, NagiosWarning
 
 from .resource import Pod
-from .consts import Phase, CONDS_GOOD
+from .consts import Phase
 
 
 def check_pods(items):

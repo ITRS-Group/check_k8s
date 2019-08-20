@@ -1,5 +1,3 @@
-import logging
-
 from k8s.exceptions import NagiosCritical, NagiosWarning
 
 from .resource import Deployment
