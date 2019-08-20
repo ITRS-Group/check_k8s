@@ -25,12 +25,9 @@ def check_pods(items):
         elif pod.phase != Phase.running and pod.phase != Phase.succeeded:
             raise NagiosCritical("Unexpected Phase for {kind} {name}: {0}".format(pod.phase.value, **pod.meta))
 
-        for cond in pod.conditions:
-            if cond.type in CONDS_GOOD and cond.status != "True":
-                raise NagiosCritical(cond.message)
-            elif cond.type not in CONDS_GOOD and cond.status == "True":
-                raise NagiosWarning(cond.message)
-
-            logging.debug(cond.message)
+        if pod.alerts_critical:
+            raise NagiosCritical(pod.alerts_critical[0])
+        elif pod.alerts_warning:
+            raise NagiosWarning(pod.alerts_warning[0])
 
     return "Found {} healthy Pods".format(len(items))

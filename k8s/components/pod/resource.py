@@ -1,6 +1,7 @@
 from k8s.resource import Resource
+from k8s.consts import State
 
-from .consts import ContainerState, Phase
+from .consts import ContainerState, Phase, CONDS_GOOD
 
 
 class Container:
@@ -22,3 +23,10 @@ class Pod(Resource):
 
         self.containers = [Container(c) for c in self._status["containerStatuses"]]
         self.phase = Phase(self._status["phase"])
+
+    def _condition_to_alert(self, _type, status):
+        if _type in CONDS_GOOD and status != "True":
+            return State.CRITICAL
+        elif _type not in CONDS_GOOD and status == "True":
+            return State.WARNING
+

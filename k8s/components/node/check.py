@@ -19,15 +19,12 @@ def check_nodes(items):
     for item in items:
         node = Node(item)
 
-        for cond in node.conditions:
-            if cond.type == "Ready" and cond.status != "True":
-                raise NagiosCritical(cond.message)
-            elif cond.type != "Ready" and cond.status == "True":
-                raise NagiosWarning(cond.message)
-
-            logging.debug(cond.message)
+        if node.alerts_critical:
+            raise NagiosCritical(node.alerts_critical[0])
+        elif node.alerts_warning:
+            raise NagiosWarning(node.alerts_warning[0])
 
         if node.unschedulable:
-            raise NagiosWarning("Node {} is ready, but unschedulable".format(node.name))
+            raise NagiosWarning("Node {} is ready, but unschedulable".format(node.meta["name"]))
 
     return "Found {} healthy Nodes".format(len(items))

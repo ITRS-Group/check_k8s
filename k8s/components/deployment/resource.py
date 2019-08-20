@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 from k8s.resource import Resource
-
+from k8s.consts import State
 
 Replicas = namedtuple("Replicas", ["total", "ready", "updated", "available"])
 
@@ -16,3 +16,7 @@ class Deployment(Resource):
             self._status["updatedReplicas"],
             self._status["availableReplicas"]
         )
+
+    def _condition_to_alert(self, _type, status):
+        if _type == "Available" and status != "True":
+            return State.CRITICAL

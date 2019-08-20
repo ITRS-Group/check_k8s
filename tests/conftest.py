@@ -111,7 +111,7 @@ def node_memory_pressure():
         },
         {
             "type": "Ready",
-            "status": "False",
+            "status": "True",
             "lastHeartbeatTime": "2019-07-30T14:06:15Z",
             "lastTransitionTime": "2019-07-29T08:34:34Z",
             "reason": "KubeletReady",

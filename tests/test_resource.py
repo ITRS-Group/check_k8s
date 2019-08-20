@@ -39,20 +39,19 @@ def test_empty_conditions(node_base):
 
 
 def test_kind(node_full):
-    assert Resource(node_full)._kind == "Resource"
+    class Test(Resource):
+        def _condition_to_alert(self, _type, status):
+            pass
+
+    assert Test(node_full)._kind == "Test"
 
 
 def test_override_kind(node_full):
-    assert Resource(node_full, kind="test_kind")._kind == "test_kind"
+    class Test(Resource):
+        def __init__(self, data):
+            super(Test, self).__init__(data, kind="test_kind")
 
+        def _condition_to_alert(self, _type, status):
+            pass
 
-def test_condition_textkey(node_base):
-    textkey = "message"
-    node_base["status"]["conditions"] = [{
-        "type": "MemoryPressure",
-        "message": "<<message>>",
-        "status": "True",
-        "lastTransitionTime": "2019-07-03T09:25:48Z"
-    }]
-
-    assert Resource(node_base, condition_textkey=textkey).conditions[0].text == "<<message>>"
+    assert Test(node_full)._kind == "test_kind"
