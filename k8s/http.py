@@ -33,10 +33,12 @@ def _request_prepare(*args, token=None, **kwargs):
     :return: instance of `urllib.Request`
     """
 
-    if token:
-        kwargs["headers"] = dict(Authorization="Bearer {}".format(token))
+    headers = kwargs.pop("headers", {})
 
-    return urllib.request.Request(*args, **kwargs)
+    if token:
+        headers.update({"Authorization": "Bearer {}".format(token)})
+
+    return urllib.request.Request(*args, headers=headers, **kwargs)
 
 
 def request(*args, insecure=False, **kwargs):
