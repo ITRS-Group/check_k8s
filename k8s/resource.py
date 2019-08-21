@@ -56,7 +56,7 @@ class Resource:
     def _condition_message(self, data):
         """Default condition message-builder for producing a human-readable message
 
-        Can be easily overridden i subclasses.
+        Can be easily overridden in subclasses.
 
         :param data: Condition dict object
         :return: Formatted condition message
