@@ -1,41 +1,64 @@
 import logging
 
 from k8s.exceptions import MetaNotFound, ConditionsNotFound, StatusNotFound
-from k8s.consts import State
+from k8s.consts import Severity
 
 
 class Resource:
     def __init__(self, data, kind=None):
+        self._alerts = {
+            Severity.CRITICAL: [],
+            Severity.WARNING: []
+        }
+
+        # Custom kind, in case we want to use `Resource` directly
         self._kind = kind or self.__class__.__name__
         self._data = data
-        self._alerts = {State.CRITICAL: [], State.WARNING: []}
 
+        # Check & set metadata
         if "metadata" not in data or not data["metadata"]:
             raise MetaNotFound("Malformed response: metadata not found for kind {}".format(self._kind))
 
         self.meta = dict(kind=self._kind, name=data["metadata"]["name"])
 
+        # Check & set status
         if "status" not in data or not data["status"]:
             raise StatusNotFound("Malformed response: status not found", **self.meta)
 
         self._status = data["status"]
 
+        # Convert Kubernetes conditions to Nagios alerts
         if "conditions" not in self._status or not len(self._status["conditions"]):
             raise ConditionsNotFound("No conditions found, cannot check health", **self.meta)
 
         for data in self._status["conditions"]:
-            message = self._get_condition_msg(data)
+            message = self._condition_message(data)
             logging.debug(message)
 
-            level = self._condition_to_alert(data["type"], data["status"])
+            level = self._condition_severity(data["type"], data["status"])
+            self._register_alert(level, message)
 
-            if level:
-                self._alerts[level].append(message)
+    def _register_alert(self, level, message):
+        """Safely registers an alert
 
-    def _get_condition_msg(self, data):
-        """Converts parts of a condition to a human-readable message
+        :param level: Severity[level]
+        :param message: Formatted message
+        :return:
+        """
 
-        :param data: Condition object
+        if level is None:
+            return
+
+        assert isinstance(level, Severity), "{} is not a known Severity".format(level)
+
+        self._alerts[level] = message
+
+    def _condition_message(self, data):
+        """Default condition message-builder for producing a human-readable message
+
+        Can be easily overridden i subclasses.
+
+        :param data: Condition dict object
         :return: Formatted condition message
         """
 
@@ -46,8 +69,8 @@ class Resource:
             **self.meta
         )
 
-    def _condition_to_alert(self, _type, status):
-        """Converts a `Resource`s Kubernetes conditions to Nagios alerts
+    def _condition_severity(self, _type, status):
+        """Abstract method for converting a `Resource`s Kubernetes condition to Nagios severity
 
         :param _type: Kubernetes condition type
         :param status: Kubernetes condition status
@@ -58,8 +81,8 @@ class Resource:
 
     @property
     def alerts_critical(self):
-        return self._alerts[State.CRITICAL]
+        return self._alerts[Severity.CRITICAL]
 
     @property
     def alerts_warning(self):
-        return self._alerts[State.WARNING]
+        return self._alerts[Severity.WARNING]

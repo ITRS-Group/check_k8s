@@ -1,6 +1,6 @@
 from enum import Enum
 
-CONDS_GOOD = ["Ready", "Initialized", "PodScheduled", "ContainersReady"]
+CONDITIONS_HEALTHY = ["Ready", "Initialized", "PodScheduled", "ContainersReady"]
 
 
 class ContainerState(Enum):
