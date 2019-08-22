@@ -29,11 +29,22 @@ opts = [
         }
     ),
     (
+        "--port",
+        {
+            "dest": "port",
+            "action": "store",
+            "type": int,
+            "default": Default.port.value,
+            "help": "Kubernetes port (default: %(default)s)"
+        }
+    ),
+    (
         "--token",
         {
             "dest": "token",
             "action": "store",
             "type": str,
+            "nargs": "?",
             "default": Default.token.value,
             "help": "Authentication Token"
         }
@@ -44,18 +55,9 @@ opts = [
             "dest": "token_file",
             "action": "store",
             "type": str,
-            "default": Default.token.value,
+            "nargs": "?",
+            "default": Default.token_file.value,
             "help": "Read Token from file"
-        }
-    ),
-    (
-        "--port",
-        {
-            "dest": "port",
-            "action": "store",
-            "type": int,
-            "default": Default.port.value,
-            "help": "Kubernetes port (default: %(default)s)"
         }
     ),
     (
@@ -103,6 +105,8 @@ opts = [
             "dest": "namespace",
             "action": "store",
             "type": str,
+            "nargs": "?",
+            "default": Default.namespace.value,
             "required": False,
             "help": "Look only within this namespace",
         }

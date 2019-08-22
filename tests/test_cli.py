@@ -4,20 +4,20 @@ from k8s.cli import parse_cmdline, Default
 
 
 def test_resource_valid():
-    assert parse_cmdline(['--resource', 'nodes']).resource == "nodes"
-    assert parse_cmdline(['--resource', 'deployments']).resource == "deployments"
-    assert parse_cmdline(['--resource', 'pods']).resource == "pods"
+    assert parse_cmdline(["--resource", "nodes"]).resource == "nodes"
+    assert parse_cmdline(["--resource", "deployments"]).resource == "deployments"
+    assert parse_cmdline(["--resource", "pods"]).resource == "pods"
 
 
 def test_resource_invalid():
     with pytest.raises(SystemExit):
-        parse_cmdline(['--resource', 'node'])
+        parse_cmdline(["--resource", "node"])
 
     with pytest.raises(SystemExit):
-        parse_cmdline(['--resource', 'PODS'])
+        parse_cmdline(["--resource", "PODS"])
 
     with pytest.raises(SystemExit):
-        parse_cmdline(['--resource', 'Deployments'])
+        parse_cmdline(["--resource", "Deployments"])
 
     with pytest.raises(SystemExit):
         parse_cmdline([])
@@ -25,7 +25,7 @@ def test_resource_invalid():
 
 def test_opts():
     def parser(args):
-        return parse_cmdline(['--resource', 'nodes'] + args)
+        return parse_cmdline(["--resource", "nodes"] + args)
 
     assert parser(["--namespace", "test"]).namespace == "test"
     assert parser(["--debug"]).debug is True
@@ -38,3 +38,26 @@ def test_opts():
     assert parser([]).timeout is Default.timeout.value
     assert parser([]).port is Default.port.value
     assert parser([]).host is Default.host.value
+
+
+def test_token_file():
+    def parser(args):
+        return parse_cmdline(["--resource", "pods"] + args)
+
+    assert parser(["--token_file", "tests/token.txt"]).token == "test"
+
+
+def test_no_token_args():
+    def parser(args):
+        return parse_cmdline(["--resource", "pods"] + args)
+
+    assert not parser(["--token", ""]).token
+    assert not parser(["--token_file", ""]).token
+    assert not parser(["--token_file", "", "--token", ""]).token
+
+
+def test_no_namespace_arg():
+    def parser(args):
+        return parse_cmdline(["--resource", "pods"] + args)
+
+    assert not parser(["--namespace", ""]).namespace
