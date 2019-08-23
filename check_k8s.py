@@ -43,7 +43,7 @@ def main():
     except PluginException as e:
         output = Output(e.state, e.message, sys.stderr)
     except HTTPError as e:
-        body = json.loads(e.read())
+        body = json.loads(e.read().decode("utf8"))
         output = Output(
             Severity.UNKNOWN,
             "{0}: {1}".format(e.code, body.get("message")),
