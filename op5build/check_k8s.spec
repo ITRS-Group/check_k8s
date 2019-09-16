@@ -11,10 +11,14 @@ License: GPL-2.0
 Group: op5/system-addons
 URL: http://www.op5.com/support
 Prefix: /opt/plugins
+%if 0%{?rhel} <= 6
 Requires: python34
-Source: %{name}-%{version}.tar.gz
 BuildRequires: python34
-BuildRequires: python34-setuptools
+%else
+Requires: python36
+BuildRequires: python36
+%endif
+Source: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}
 BuildArch: noarch
 
@@ -25,10 +29,10 @@ Nagios plugin for monitoring Kubernetes Clusters, built using the Python standar
 %setup -q -n %{name}-%{version}
 
 %build
-python3.4 -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
-python3.4 -m pip install pytest
-python3.4 -m pytest
+python3 -m pip install pytest
+python3 -m pytest
 
 %{__install} -D -p %{exec_path} %{buildroot}/%{plugin_root}/%{exec_path}
 cp --archive %{pkg_path} %{buildroot}/%{plugin_root}/
