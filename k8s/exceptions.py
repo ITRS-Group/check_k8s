@@ -1,4 +1,4 @@
-from k8s.consts import Severity
+from k8s.consts import State
 
 
 class PluginException(Exception):
@@ -12,15 +12,15 @@ class PluginException(Exception):
 
 
 class NagiosWarning(PluginException):
-    state = Severity.WARNING
+    state = State.WARNING
 
 
 class NagiosCritical(PluginException):
-    state = Severity.CRITICAL
+    state = State.CRITICAL
 
 
 class NagiosUnknown(PluginException):
-    state = Severity.UNKNOWN
+    state = State.UNKNOWN
 
 
 class MetaNotFound(NagiosUnknown):

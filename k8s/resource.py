@@ -1,14 +1,14 @@
 import logging
 
 from k8s.exceptions import MetaNotFound, ConditionsNotFound, StatusNotFound
-from k8s.consts import Severity
+from k8s.consts import State
 
 
 class Resource:
     def __init__(self, data, kind=None):
         self._alerts = {
-            Severity.CRITICAL: [],
-            Severity.WARNING: []
+            State.CRITICAL: [],
+            State.WARNING: []
         }
 
         # Custom kind, in case we want to use `Resource` directly
@@ -31,13 +31,6 @@ class Resource:
         if "conditions" not in self._status or not len(self._status["conditions"]):
             raise ConditionsNotFound("No conditions found, cannot check health", **self.meta)
 
-        for data in self._status["conditions"]:
-            message = self._condition_message(data)
-            logging.debug(message)
-
-            level = self._condition_severity(data["type"], data["status"])
-            self._register_alert(level, message)
-
     def _register_alert(self, level, message):
         """Safely registers an alert
 
@@ -49,11 +42,21 @@ class Resource:
         if level is None:
             return
 
-        assert isinstance(level, Severity), "{} is not a known Severity".format(level)
+        assert isinstance(level, State), "{} is not a known Severity".format(level)
 
         self._alerts[level] = message
 
-    def _condition_message(self, data):
+    @property
+    def alert(self):
+        for data in self._status["conditions"]:
+            message = self._format_message(data)
+            logging.debug(message)
+
+            state, problem = self._get_status(data["type"], data["status"])
+            if state != State:
+                return message, state, problem
+
+    def _format_message(self, data):
         """Default condition message-builder for producing a human-readable message
 
         Can be easily overridden in subclasses.
@@ -69,20 +72,12 @@ class Resource:
             **self.meta
         )
 
-    def _condition_severity(self, _type, status):
-        """Abstract method for converting a `Resource`s Kubernetes condition to Nagios severity
+    def _get_status(self, cond_type, cond_state):
+        """Abstract method for getting a Resource's current status
 
-        :param _type: Kubernetes condition type
-        :param status: Kubernetes condition status
+        :param cond_type: Kubernetes condition type
+        :param cond_state: Kubernetes condition status
         :return: (<Severity>, <message>)
         """
 
         raise NotImplementedError
-
-    @property
-    def alerts_critical(self):
-        return self._alerts[Severity.CRITICAL]
-
-    @property
-    def alerts_warning(self):
-        return self._alerts[Severity.WARNING]

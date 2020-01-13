@@ -1,5 +1,5 @@
 from k8s.resource import Resource
-from k8s.consts import Severity
+from k8s.consts import State
 
 
 class Node(Resource):
@@ -9,8 +9,8 @@ class Node(Resource):
         # https://kubernetes.io/docs/concepts/architecture/nodes/#manual-node-administration
         self.unschedulable = data["spec"].get("unschedulable", False)
 
-    def _condition_severity(self, _type, status):
+    def _get_status(self, _type, status):
         if _type == "Ready" and status != "True":
-            return Severity.CRITICAL
+            return State.CRITICAL
         elif _type != "Ready" and status == "True":
-            return Severity.WARNING
+            return State.WARNING

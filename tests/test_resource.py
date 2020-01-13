@@ -40,7 +40,7 @@ def test_empty_conditions(node_base):
 
 def test_kind(node_full):
     class Test(Resource):
-        def _condition_severity(self, _type, status):
+        def _get_status(self, _type, status):
             pass
 
     assert Test(node_full)._kind == "Test"
@@ -51,7 +51,7 @@ def test_override_kind(node_full):
         def __init__(self, data):
             super(Test, self).__init__(data, kind="test_kind")
 
-        def _condition_severity(self, _type, status):
+        def _get_status(self, _type, status):
             pass
 
     assert Test(node_full)._kind == "test_kind"
