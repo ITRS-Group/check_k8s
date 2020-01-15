@@ -5,17 +5,13 @@ import logging
 import traceback
 import json
 
-from collections import namedtuple
 from urllib.error import URLError, HTTPError
 
 from k8s.components import MAPPINGS
 from k8s.cli import parse_cmdline
 from k8s.http import build_url, request
 from k8s.consts import NAGIOS_MSG, State
-from k8s.exceptions import PluginException
-
-
-Output = namedtuple("Output", ["state", "message", "channel"])
+from k8s.result import Output
 
 
 def main():
@@ -38,10 +34,9 @@ def main():
     # Request and check health data
     try:
         response, status = request(url, token=parsed.token, insecure=parsed.insecure)
-        result = health_check(response)
-        output = Output(State.OK, result, sys.stdout)
-    except PluginException as e:
-        output = Output(e.state, e.message, sys.stderr)
+        output = health_check(response)
+        if not isinstance(output, Output):
+            raise TypeError("Unknown health check format")
     except HTTPError as e:
         body = json.loads(e.read().decode("utf8"))
         output = Output(
@@ -59,7 +54,7 @@ def main():
         output = Output(State.UNKNOWN, e, sys.stderr)
 
     msg = NAGIOS_MSG.format(state=output.state.name, message=output.message)
-    print(msg, file=output.channel)
+    output.channel.write(msg)
     sys.exit(output.state.value)
 
 

@@ -1,22 +1,6 @@
-from k8s.exceptions import NagiosCritical, NagiosWarning
+from k8s.result import Result
 
 from .resource import Deployment
-
-from k8s.consts import State
-
-from collections import namedtuple
-
-
-Counters = namedtuple("StateCounters", ["OK", "WARNING", "CRITICAL", "UNKNOWN"])
-
-
-def state_counters(items):
-    counters = {s: 0 for s in State._member_map_.values()}
-    for _, state, _ in items:
-        counters[state] += 1
-
-    # return Counters(**counters)
-    return counters
 
 
 def check_deployments(items):
@@ -30,12 +14,12 @@ def check_deployments(items):
     :return: Deployments health summary
     """
 
-    alerts = [Deployment(i).alert for i in items]
-    counter = state_counters(alerts)
-    print(counter)
-
-    for a in alerts:
-        if not a:
-            continue
-
-    return "Found {} healthy Deployments".format(len(items))
+    return Result(
+        [Deployment(i) for i in items],
+        perfdata_mappings=dict(
+            ok="hej",
+            warning="test",
+            critical="ugh",
+            unknown="bah"
+        )
+    ).output

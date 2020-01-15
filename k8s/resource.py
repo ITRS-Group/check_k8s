@@ -6,22 +6,17 @@ from k8s.consts import State
 
 class Resource:
     def __init__(self, data, kind=None):
-        self._alerts = {
-            State.CRITICAL: [],
-            State.WARNING: []
-        }
-
         # Custom kind, in case we want to use `Resource` directly
         self._kind = kind or self.__class__.__name__
         self._data = data
 
-        # Check & set metadata
+        # Metadata
         if "metadata" not in data or not data["metadata"]:
             raise MetaNotFound("Malformed response: metadata not found for kind {}".format(self._kind))
 
         self.meta = dict(kind=self._kind, name=data["metadata"]["name"])
 
-        # Check & set status
+        # Status
         if "status" not in data or not data["status"]:
             raise StatusNotFound("Malformed response: status not found", **self.meta)
 
@@ -31,30 +26,13 @@ class Resource:
         if "conditions" not in self._status or not len(self._status["conditions"]):
             raise ConditionsNotFound("No conditions found, cannot check health", **self.meta)
 
-    def _register_alert(self, level, message):
-        """Safely registers an alert
-
-        :param level: Severity[level]
-        :param message: Formatted message
-        :return:
-        """
-
-        if level is None:
-            return
-
-        assert isinstance(level, State), "{} is not a known Severity".format(level)
-
-        self._alerts[level] = message
-
     @property
-    def alert(self):
+    def condition(self):
         for data in self._status["conditions"]:
             message = self._format_message(data)
             logging.debug(message)
 
-            state, problem = self._get_status(data["type"], data["status"])
-            if state != State:
-                return message, state, problem
+            return self._get_status(data["type"], data["status"]), message
 
     def _format_message(self, data):
         """Default condition message-builder for producing a human-readable message

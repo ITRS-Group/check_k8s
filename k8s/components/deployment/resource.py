@@ -21,11 +21,10 @@ class Deployment(Resource):
         reps = self.replicas
 
         if cond_type == "Available" and cond_state != "True":
-            return State.CRITICAL, "unavailable"
+            return State.CRITICAL
         elif reps.available < reps.total or reps.updated < reps.total:
             if reps.available != 0 and reps.updated != 0:
-                return State.WARNING, "degraded"
-
-            return State.CRITICAL, "unavailable"
+                return State.WARNING
+            return State.CRITICAL
         else:
-            return State.OK, "available"
+            return State.OK
