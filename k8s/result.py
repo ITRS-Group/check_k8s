@@ -2,83 +2,50 @@ import sys
 
 from collections import namedtuple
 
-from k8s.consts import State
+from k8s.consts import State, PERFDATA_SEPARATOR
 
 
 Output = namedtuple("Output", ["state", "message", "channel"])
 
 
 class Result:
-    conditions = {}
-    _perfdata_mappings = dict(
-        ok="ok",
-        warning="warning",
-        critical="critical",
-        unknown="unknown"
-    )
+    def __init__(self, cls, items):
+        self._messages = {}
+        self._perfdata = {v.value: 0 for v in cls.PerfdataMapping}
+        conditions = []
+        conditions.extend([cls(i).conditions for i in items])
 
-    def __init__(self, items, perfdata_mappings=None):
-        self._perfdata_mappings.update(perfdata_mappings or {})
+        for r in conditions:
+            message, state, perfkey = r
+            self._add_message(state, message)
+            self._perfdata[perfkey.value] += 1
 
-        for i in items:
-            state, message = i.condition
-            if state not in self.conditions:
-                self.conditions[state] = []
+    def _add_message(self, state, message):
+        if state not in self._messages:
+            self._messages[state] = []
 
-            self.conditions[state].append(message)
+        self._messages[state].append(message)
 
     @property
     def perfdata(self):
-        for k, v in self._perfdata_mappings.items():
-            count = len(getattr(self, k))
-            yield "{}={}".format(v, count)
+        return ["{}={}".format(k, v) for k, v in self._perfdata.items()]
 
-    def _format_output(self, message, conditions):
-        return "{0}\n{conditions}|{perfdata}".format(
-            message,
-            conditions="\n".join(conditions),
-            perfdata=" ".join(self.perfdata)
+    def _get_output(self, state, topic, channel=sys.stderr):
+        message = "{0}\n{conditions}|{perfdata}".format(
+            topic,
+            conditions="\n".join(self._messages[state]),
+            perfdata=PERFDATA_SEPARATOR.join(self.perfdata)
         )
+        return Output(state, message, channel)
 
     @property
     def output(self):
-        if self.critical:
-            return Output(
-                State.CRITICAL,
-                self._format_output("One or more errors were found", self.critical),
-                sys.stderr
-            )
-        elif self.warning:
-            return Output(
-                State.WARNING,
-                self._format_output("One or more warnings were found", self.warning),
-                sys.stderr
-            )
+        def severity(level):
+            return level in self._messages
 
-        return Output(
-            State.OK,
-            self._format_output("All checks were successful", self.ok),
-            sys.stdout
-        )
+        if severity(State.CRITICAL):
+            return self._get_output(State.CRITICAL, "One or more errors were detected")
+        elif severity(State.WARNING):
+            return self._get_output(State.WARNING, "One or more warnings were detected")
 
-    def _get_conditions(self, state):
-        if state not in self.conditions:
-            return []
-
-        return self.conditions[state]
-
-    @property
-    def ok(self):
-        return self._get_conditions(State.OK)
-
-    @property
-    def warning(self):
-        return self._get_conditions(State.WARNING)
-
-    @property
-    def critical(self):
-        return self._get_conditions(State.CRITICAL)
-
-    @property
-    def unknown(self):
-        return self._get_conditions(State.UNKNOWN)
+        return self._get_output(State.OK, "All checks were successful", channel=sys.stdout)

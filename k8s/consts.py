@@ -1,6 +1,7 @@
 from enum import Enum
 
 NAGIOS_MSG = "{state} - {message}"
+PERFDATA_SEPARATOR = " "
 
 
 class State(Enum):

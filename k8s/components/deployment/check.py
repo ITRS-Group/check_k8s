@@ -14,12 +14,4 @@ def check_deployments(items):
     :return: Deployments health summary
     """
 
-    return Result(
-        [Deployment(i) for i in items],
-        perfdata_mappings=dict(
-            ok="hej",
-            warning="test",
-            critical="ugh",
-            unknown="bah"
-        )
-    ).output
+    return Result(Deployment, items).output

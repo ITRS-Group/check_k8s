@@ -1,7 +1,6 @@
 import logging
 
 from k8s.exceptions import MetaNotFound, ConditionsNotFound, StatusNotFound
-from k8s.consts import State
 
 
 class Resource:
@@ -27,12 +26,17 @@ class Resource:
             raise ConditionsNotFound("No conditions found, cannot check health", **self.meta)
 
     @property
-    def condition(self):
-        for data in self._status["conditions"]:
-            message = self._format_message(data)
+    def conditions(self):
+        data = []
+
+        for cnd in self._status["conditions"]:
+            message = self._format_message(cnd)
             logging.debug(message)
 
-            return self._get_status(data["type"], data["status"]), message
+            state, perfkey = self._get_status(cnd["type"], cnd["status"])
+            data.append((message, state, perfkey))
+
+        return data
 
     def _format_message(self, data):
         """Default condition message-builder for producing a human-readable message
