@@ -1,7 +1,7 @@
 import pytest
 
 from k8s.components.pod import check_pods, Pod, Container
-from k8s.exceptions import NagiosCritical, NagiosWarning
+from k8s.consts import NaemonState
 
 
 def test_type(pod_full):
@@ -42,25 +42,21 @@ def test_container_count(pod_full, pod_containers):
 
 def test_check_pods_pending(pod_full):
     pod_full["status"]["phase"] = "Pending"
-    with pytest.raises(NagiosWarning):
-        assert check_pods([pod_full])
+    assert check_pods([pod_full]).output.state == NaemonState.CRITICAL
 
 
 def test_check_pods_failed(pod_full):
     pod_full["status"]["phase"] = "Failed"
-    with pytest.raises(NagiosCritical):
-        assert check_pods([pod_full])
+    assert check_pods([pod_full]).output.state == NaemonState.CRITICAL
 
 
 def test_check_pods_not_running(pod_base, pod_not_ready, pod_containers):
     pod_base["status"]["conditions"] = pod_not_ready
     pod_base["status"]["containerStatuses"] = pod_containers
-    with pytest.raises(NagiosCritical):
-        check_pods([pod_base])
+    assert check_pods([pod_base]).output.state == NaemonState.CRITICAL
 
 
 def test_check_pods_cond_other(pod_base, pod_condition_other, pod_containers):
     pod_base["status"]["conditions"] = pod_condition_other
     pod_base["status"]["containerStatuses"] = pod_containers
-    with pytest.raises(NagiosWarning):
-        check_pods([pod_base])
+    assert check_pods([pod_base]).output.state == NaemonState.WARNING

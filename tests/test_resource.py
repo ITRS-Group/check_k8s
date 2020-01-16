@@ -1,6 +1,6 @@
 import pytest
 
-from k8s.resource import Resource
+from k8s.components.resource import Resource
 from k8s.exceptions import MetaNotFound, StatusNotFound, ConditionsNotFound
 
 
@@ -30,12 +30,12 @@ def test_empty_status(node_base):
 
 def test_no_conditions(node_base):
     with pytest.raises(ConditionsNotFound):
-        Resource(node_base)
+        getattr(Resource(node_base), "condition")
 
 
 def test_empty_conditions(node_base):
     with pytest.raises(ConditionsNotFound):
-        Resource(node_base)
+        getattr(Resource(node_base), "condition")
 
 
 def test_kind(node_full):

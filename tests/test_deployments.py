@@ -1,11 +1,20 @@
-import pytest
-
 from k8s.components.deployment import check_deployments, Deployment
-from k8s.exceptions import NagiosCritical, NagiosWarning
+from k8s.result import Result, Output
+from k8s.consts import NaemonState
 
 
 def test_deployment_type(deployment_full):
     assert Deployment(deployment_full)._kind == "Deployment"
+
+
+def test_result(deployment_full):
+    result = check_deployments([deployment_full])
+    assert isinstance(result, Result)
+
+
+def test_output(deployment_full):
+    output = check_deployments([deployment_full]).output
+    assert isinstance(output, Output)
 
 
 def test_deployment_replicas(deployment_full):
@@ -21,18 +30,18 @@ def test_deployment_replicas(deployment_full):
 def test_check_replicas_unavailable(deployment_full):
     replicas = deployment_full["status"]
     replicas["availableReplicas"] = 0
-    with pytest.raises(NagiosCritical):
-        check_deployments([deployment_full])
+    output = check_deployments([deployment_full]).output
+    assert output.state == NaemonState.CRITICAL
 
 
 def test_check_replicas_not_updated(deployment_full):
     replicas = deployment_full["status"]
     replicas["updatedReplicas"] = 0
-    with pytest.raises(NagiosCritical):
-        check_deployments([deployment_full])
+    output = check_deployments([deployment_full]).output
+    assert output.state == NaemonState.CRITICAL
 
 
 def test_check_replicas_degraded(deployment_full, deployment_replicas_degraded):
     deployment_full["status"].update(deployment_replicas_degraded)
-    with pytest.raises(NagiosWarning):
-        check_deployments([deployment_full])
+    output = check_deployments([deployment_full]).output
+    assert output.state == NaemonState.WARNING
