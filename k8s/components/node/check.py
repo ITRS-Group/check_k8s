@@ -14,4 +14,4 @@ def check_nodes(items):
     :return: Nodes health summary
     """
 
-    return Result(Node, items).output
+    return Result(Node, items)

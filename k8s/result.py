@@ -2,8 +2,13 @@ import sys
 
 from collections import namedtuple
 
-from k8s.consts import State, PERFDATA_SEPARATOR
-
+from k8s.consts import (
+    NaemonState,
+    PERFDATA_SEPARATOR,
+    RESULT_SUCCESS,
+    RESULT_CRITICAL,
+    RESULT_WARNING
+)
 
 Output = namedtuple("Output", ["state", "message", "channel"])
 
@@ -11,20 +16,16 @@ Output = namedtuple("Output", ["state", "message", "channel"])
 class Result:
     def __init__(self, cls, items):
         self._messages = {}
-        self._perfdata = {v.value: 0 for v in cls.PerfdataMapping}
-        conditions = []
-        conditions.extend([cls(i).conditions for i in items])
+        self._perfdata = {v.value: 0 for v in cls.PerfMap}
+        self._register_conditions([cls(i).condition for i in items])
 
-        for r in conditions:
-            message, state, perfkey = r
-            self._add_message(state, message)
-            self._perfdata[perfkey.value] += 1
+    def _register_conditions(self, conditions):
+        for message, status in conditions:
+            if status.state not in self._messages:
+                self._messages[status.state] = []
 
-    def _add_message(self, state, message):
-        if state not in self._messages:
-            self._messages[state] = []
-
-        self._messages[state].append(message)
+            self._perfdata[status.perfkey.value] += 1
+            self._messages[status.state].append(message)
 
     @property
     def perfdata(self):
@@ -43,9 +44,9 @@ class Result:
         def severity(level):
             return level in self._messages
 
-        if severity(State.CRITICAL):
-            return self._get_output(State.CRITICAL, "One or more errors were detected")
-        elif severity(State.WARNING):
-            return self._get_output(State.WARNING, "One or more warnings were detected")
+        if severity(NaemonState.CRITICAL):
+            return self._get_output(NaemonState.CRITICAL, RESULT_CRITICAL)
+        elif severity(NaemonState.WARNING):
+            return self._get_output(NaemonState.WARNING, RESULT_WARNING)
 
-        return self._get_output(State.OK, "All checks were successful", channel=sys.stdout)
+        return self._get_output(NaemonState.OK, RESULT_SUCCESS, channel=sys.stdout)

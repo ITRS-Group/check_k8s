@@ -14,4 +14,4 @@ def check_pods(items):
     :return: Pods health summary
     """
 
-    return Result(Pod, items).output
+    return Result(Pod, items)

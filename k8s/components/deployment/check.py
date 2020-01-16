@@ -14,4 +14,4 @@ def check_deployments(items):
     :return: Deployments health summary
     """
 
-    return Result(Deployment, items).output
+    return Result(Deployment, items)

@@ -1,9 +1,7 @@
-from k8s.consts import State
+from k8s.consts import NaemonState
 
 
-class PluginException(Exception):
-    state = None
-
+class ApplicationError(Exception):
     def __init__(self, message, **meta):
         if not meta:
             self.message = message
@@ -11,26 +9,18 @@ class PluginException(Exception):
             self.message = "{kind} {name}: {0}".format(message, **meta)
 
 
-class NagiosWarning(PluginException):
-    state = State.WARNING
-
-
-class NagiosCritical(PluginException):
-    state = State.CRITICAL
-
-
-class NagiosUnknown(PluginException):
-    state = State.UNKNOWN
-
-
-class MetaNotFound(NagiosUnknown):
+class HealthUnknown(ApplicationError):
     pass
 
 
-class StatusNotFound(NagiosUnknown):
+class MetaNotFound(ApplicationError):
     pass
 
 
-class ConditionsNotFound(NagiosUnknown):
+class StatusNotFound(ApplicationError):
+    pass
+
+
+class ConditionsNotFound(ApplicationError):
     pass
 
