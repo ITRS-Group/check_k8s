@@ -20,6 +20,11 @@ class Result:
         self._register_conditions([cls(i).condition for i in items])
 
     def _register_conditions(self, conditions):
+        """Registers conditions perfdata and messages
+
+        :param conditions: [(message<str>, status<NaemonStatus>), ...]
+        """
+
         for message, status in conditions:
             if status.state not in self._messages:
                 self._messages[status.state] = []
@@ -29,11 +34,27 @@ class Result:
 
     @property
     def perfdata(self):
+        """Converts the Resource's perfdata items into Naemon perfdata string pairs
+
+        Example:
+        dict(available=5, unavailable=3) => ["available=5", "unavailable=3"]
+
+        :return: List of Naemon perfdata pairs
+        """
+
         return ["{}={}".format(k, v) for k, v in self._perfdata.items()]
 
-    def _get_output(self, state, topic, channel=sys.stderr):
+    def _get_output(self, state, summary, channel=sys.stderr):
+        """Produces an Output object for accessing Naemon state, messages and channel
+
+        :param state: NaemonState object
+        :param summary: Result summary string, e.g. "All checks were successful"
+        :param channel: Output channel
+        :return: Output object
+        """
+
         message = "{0}\n{conditions}|{perfdata}".format(
-            topic,
+            summary,
             conditions="\n".join(self._messages[state]),
             perfdata=PERFDATA_SEPARATOR.join(self.perfdata)
         )

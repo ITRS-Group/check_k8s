@@ -46,11 +46,11 @@ class Resource:
     def perf(self):
         return self.PerfMap
 
-    def _get_status(self, k8s_type, k8s_status):
-        """Abstract method for getting a Resource's current status
+    def _get_status(self, cond_type, cond_status):
+        """Determines status using a Kubernetes Condition's  type and status
 
-        :param k8s_type: Kubernetes condition type
-        :param k8s_status: Kubernetes condition status
+        :param cond_type: Kubernetes condition type
+        :param cond_status: Kubernetes condition status
         :return: (<Severity>, <message>)
         """
 
@@ -58,6 +58,13 @@ class Resource:
 
     @property
     def condition(self):
+        """Returns the Resources status and associated message
+
+        If state cannot be determined, the HealthUnknown exception is raised.
+
+        :return: (message, status)
+        """
+
         if "conditions" not in self._status or not len(self._status["conditions"]):
             raise ConditionsNotFound("No conditions found, cannot check health", **self.meta)
 
@@ -72,7 +79,7 @@ class Resource:
             logging.debug(message)
 
             if status.state == NaemonState.OK:
-                # Only store latest successful condition
+                # Only store last successful condition
                 status_ok = message, status
             else:
                 # Immediately return if an issue was encountered
@@ -88,18 +95,16 @@ class Resource:
 
         return status_ok
 
-    def _format_message(self, data):
-        """Default condition message-builder for producing a human-readable message
+    def _format_message(self, condition):
+        """Converts a Kubernetes condition into a human-readable message
 
-        Can be easily overridden in subclasses.
-
-        :param data: Condition dict object
+        :param condition: Condition dict
         :return: Formatted condition message
         """
 
         return "{kind} {name}: {0} {1} since {2}".format(
-            "condition" if data["status"] == "True" else "condition [not]",
-            data["type"],
-            data["lastTransitionTime"],
+            "condition" if condition["status"] == "True" else "condition [not]",
+            condition["type"],
+            condition["lastTransitionTime"],
             **self.meta
         )
