@@ -15,8 +15,6 @@ class Container:
         # Container State is a single-item dict, with a nested dict value.
         # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/#containerstate-v1-core
         state = list(data["state"].keys())
-
-        # Ensure state is known
         self.state = ContainerState(state[0])
 
 
@@ -30,7 +28,7 @@ class Pod(Resource):
     def __init__(self, data):
         super(Pod, self).__init__(data)
 
-        self.containers = [Container(c) for c in self._status["containerStatuses"]]
+        self.containers = [Container(c) for c in self._status.get("containerStatuses", [])]
         self.phase = Phase(self._status["phase"])
 
     def _get_status(self, cnd_type, cnd_status):
