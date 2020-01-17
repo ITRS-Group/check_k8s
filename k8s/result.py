@@ -53,7 +53,7 @@ class Result:
         :return: Output object
         """
 
-        message = "{0}\n{conditions}|{perfdata}".format(
+        message = "{0}\n{conditions}|{perfdata}\n".format(
             summary,
             conditions="\n".join(self._messages[state]),
             perfdata=PERFDATA_SEPARATOR.join(self.perfdata)
