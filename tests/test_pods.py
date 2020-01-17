@@ -4,7 +4,7 @@ from k8s.components.pod import check_pods, Pod, Container
 from k8s.consts import NaemonState
 
 
-def test_type(pod_full):
+def test_kind(pod_full):
     assert Pod(pod_full)._kind == "Pod"
 
 
@@ -40,23 +40,23 @@ def test_container_count(pod_full, pod_containers):
     assert len(Pod(pod_full).containers) == len(pod_containers)
 
 
-def test_check_pods_pending(pod_full):
+def test_check_pending(pod_full):
     pod_full["status"]["phase"] = "Pending"
     assert check_pods([pod_full]).output.state == NaemonState.CRITICAL
 
 
-def test_check_pods_failed(pod_full):
+def test_check_failed(pod_full):
     pod_full["status"]["phase"] = "Failed"
     assert check_pods([pod_full]).output.state == NaemonState.CRITICAL
 
 
-def test_check_pods_not_running(pod_base, pod_not_ready, pod_containers):
+def test_check_not_running(pod_base, pod_not_ready, pod_containers):
     pod_base["status"]["conditions"] = pod_not_ready
     pod_base["status"]["containerStatuses"] = pod_containers
     assert check_pods([pod_base]).output.state == NaemonState.CRITICAL
 
 
-def test_check_pods_cond_other(pod_base, pod_condition_other, pod_containers):
+def test_check_cond_other(pod_base, pod_condition_other, pod_containers):
     pod_base["status"]["conditions"] = pod_condition_other
     pod_base["status"]["containerStatuses"] = pod_containers
     assert check_pods([pod_base]).output.state == NaemonState.WARNING

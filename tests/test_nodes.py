@@ -3,7 +3,7 @@ from k8s.components.node import check_nodes, Node
 from k8s.consts import RESULT_CRITICAL, RESULT_SUCCESS, RESULT_WARNING
 
 
-def test_type(node_full):
+def test_kind(node_full):
     assert Node(node_full).unschedulable is False
     assert Node(node_full)._kind == "Node"
 
