@@ -25,8 +25,8 @@ class Pod(Resource):
         DEGRADED = "degraded"
         PENDING = "pending"
 
-    def __init__(self, data):
-        super(Pod, self).__init__(data)
+    def __init__(self, data, *args, **kwargs):
+        super(Pod, self).__init__(data, *args, **kwargs)
 
         self.containers = [Container(c) for c in self._status.get("containerStatuses", [])]
         self.phase = Phase(self._status["phase"])

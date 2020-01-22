@@ -12,8 +12,8 @@ class Node(Resource):
         DEGRADED = "degraded"
         UNSCHEDULABLE = "unschedulable"
 
-    def __init__(self, data):
-        super(Node, self).__init__(data)
+    def __init__(self, data, *args, **kwargs):
+        super(Node, self).__init__(data, *args, **kwargs)
 
         # https://kubernetes.io/docs/concepts/architecture/nodes/#manual-node-administration
         self.unschedulable = data["spec"].get("unschedulable", False)

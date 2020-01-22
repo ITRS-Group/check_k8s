@@ -16,8 +16,8 @@ class Deployment(Resource):
         DEGRADED = "degraded"
         NOREPS = "noreps"
 
-    def __init__(self, data):
-        super(Deployment, self).__init__(data)
+    def __init__(self, data, *args, **kwargs):
+        super(Deployment, self).__init__(data, *args, **kwargs)
 
         self.replicas = Replicas(
             self._status.get("replicas", 0),
