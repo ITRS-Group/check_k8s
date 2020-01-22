@@ -1,6 +1,7 @@
 import logging
 
 from enum import Enum
+from abc import ABC, abstractmethod
 
 from k8s.exceptions import (
     MetaNotFound,
@@ -19,7 +20,7 @@ class NaemonStatus:
         self.msg_override = msg_override
 
 
-class Resource:
+class Resource(ABC):
     class PerfMap(Enum):
         AVAILABLE = "available"
         UNAVAILABLE = "unavailable"
@@ -46,6 +47,7 @@ class Resource:
     def perf(self):
         return self.PerfMap
 
+    @abstractmethod
     def _get_status(self, cond_type, cond_status):
         """Determines status using a Kubernetes Condition's  type and status
 
@@ -53,8 +55,6 @@ class Resource:
         :param cond_status: Kubernetes condition status
         :return: (<Severity>, <message>)
         """
-
-        raise NotImplementedError
 
     @property
     def condition(self):
