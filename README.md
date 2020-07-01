@@ -1,6 +1,9 @@
 check_k8s: Kubernetes plugin for Nagios
 ===
 
+
+TEST
+
 Nagios plugin for monitoring Kubernetes Clusters, built using the Python standard library.
 
 It currently supports monitoring of *Pods*, *Nodes* and *Deployments*. 
