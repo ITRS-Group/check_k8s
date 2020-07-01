@@ -1,6 +1,8 @@
 check_k8s: Kubernetes plugin for Nagios
 ===
 
+![Travis (.org)](https://img.shields.io/travis/itrs-group/check_k8s) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/ITRS-Group/check_k8s.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ITRS-Group/check_k8s/context:python) ![GitHub](https://img.shields.io/github/license/itrs-group/check_k8s)
+
 Nagios plugin for monitoring Kubernetes Clusters, built using the Python standard library.
 
 It currently supports monitoring of *Pods*, *Nodes* and *Deployments*. 
