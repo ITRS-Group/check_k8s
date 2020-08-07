@@ -18,6 +18,7 @@ BuildRequires: python34
 Requires: python36
 BuildRequires: python36
 %endif
+Requires: op5-monitor-user
 Source: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}
 BuildArch: noarch
@@ -48,5 +49,7 @@ cp --archive %{pkg_path} %{buildroot}/%{plugin_root}/
 rm -rf %buildroot
 
 %changelog
+* Fri Aug 07 2020 Jacob Hansen <jhansen@op5.com> - 0.1.0
+- Add OP5-monitor-user requirement
 * Fri Aug 16 2019 Robert Wikman <rwikman@op5.com> - 0.1.0
 - Init
