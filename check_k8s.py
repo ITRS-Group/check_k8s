@@ -42,16 +42,16 @@ def main():
         output = Output(
             NaemonState.UNKNOWN,
             "{0}: {1}".format(e.code, body.get("message")),
-            sys.stderr
+            sys.stdout
         )
     except URLError as e:
-        output = Output(NaemonState.UNKNOWN, e.reason, sys.stderr)
+        output = Output(NaemonState.UNKNOWN, e.reason, sys.stdout)
     except Exception as e:
         if parsed.debug:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             traceback.print_tb(exc_traceback, file=sys.stdout)
 
-        output = Output(NaemonState.UNKNOWN, e, sys.stderr)
+        output = Output(NaemonState.UNKNOWN, e, sys.stdout)
 
     msg = NAGIOS_MSG.format(state=output.state.name, message=output.message)
     output.channel.write(msg)

@@ -44,7 +44,7 @@ class Result:
 
         return ["{}={}".format(k, v) for k, v in self._perfdata.items()]
 
-    def _get_output(self, state, summary, channel=sys.stderr):
+    def _get_output(self, state, summary, channel=sys.stdout):
         """Produces an Output object for accessing Naemon state, messages and channel
 
         :param state: NaemonState object
