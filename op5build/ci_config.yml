@@ -1,0 +1,11 @@
+pre:
+  steps: |
+    set -ex
+    cd src
+    python3 -m venv .venv  # poetry will find and use .venv
+    source .venv/bin/activate
+    pip install --upgrade pip==21.1.3
+    pip install poetry
+    poetry env info
+    poetry install --no-interaction --no-root
+    poetry run python3 -m pytest -v
