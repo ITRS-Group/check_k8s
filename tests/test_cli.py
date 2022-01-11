@@ -28,6 +28,7 @@ def test_opts():
         return parse_cmdline(["--resource", "nodes"] + args)
 
     assert parser(["--namespace", "test"]).namespace == "test"
+    assert parser(["--namespace", "test,test2,test3"]).namespace == "test,test2,test3"
     assert parser(["--debug"]).debug is True
     assert parser(["--insecure"]).insecure is True
     assert parser(["--timeout", "123.0"]).timeout == 123.0
