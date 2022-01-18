@@ -1,0 +1,28 @@
+[commands]
+check_k8s_nodes=$USER1$/check_k8s.py --resource nodes --host $ARG1$ --port $ARG2$ --token $ARG3$ --token_file $ARG4$ --namespace $ARG5$
+check_k8s_pods=$USER1$/check_k8s.py --resource pods --host $ARG1$ --port $ARG2$ --token $ARG3$ --token_file $ARG4$ --namespace $ARG5$
+check_k8s_deployments=$USER1$/check_k8s.py --resource deployments --host $ARG1$ --port $ARG2$ --token $ARG3$ --token_file $ARG4$ --namespace $ARG5$
+
+[name]
+check_k8s
+
+[info]
+Provides support for monitoring Kubernetes clusters
+
+[why]
+To make sure the Kubernetes cluster is working as expected
+
+[how]
+Obtains conditions and other health data over HTTP
+
+[platforms]
+Not platform dependent
+
+[categories]
+Containerization
+
+[support]
+6
+
+[tags]
+Kubernetes
