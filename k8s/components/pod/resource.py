@@ -41,6 +41,10 @@ class Pod(Resource):
         elif cnd_type in STATUSES:
             if cnd_status == "True":
                 return NaemonStatus(NaemonState.OK, self.perf.AVAILABLE)
+            # YV - adding this when the phase is Succeeded
+            # This happens when the pod is not running since it's already completed
+            elif cnd_status and self.phase == Phase.succeeded:
+                return NaemonStatus(NaemonState.OK, self.perf.AVAILABLE)
             else:
                 return NaemonStatus(NaemonState.CRITICAL, self.perf.UNAVAILABLE)
         elif cnd_type not in STATUSES and cnd_status == "True":
