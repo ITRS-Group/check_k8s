@@ -26,7 +26,7 @@ def main():
     urls = []
     if parsed.namespace is not None:
       for i in parsed.namespace.split(","):
-  
+
         # Build URL using input arguments
         urls.append(build_url(
             host=parsed.host,
