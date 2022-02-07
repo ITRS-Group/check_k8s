@@ -27,11 +27,12 @@ Nagios plugin for monitoring Kubernetes Clusters, built using the Python standar
 cp --archive %{pkg_path} %{buildroot}%{prefix}/
 
 # Metadata
-%{__mkdir} -p -m 0751 %buildroot%prefix/metadata
+%{__mkdir} -p -m 0755 %buildroot%prefix/metadata
 %{__install} -m 0644 op5build/check_k8s.metadata %buildroot%prefix/metadata/
 
 %files
 %{prefix}
+%dir %attr(0755,-,-) %prefix/metadata/
 %prefix/metadata/check_k8s.metadata
 %license LICENSE
 %doc README.md
