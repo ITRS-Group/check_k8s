@@ -46,7 +46,6 @@ def main():
       ))
       # Request and check health data
     for url in urls:
-        print(f"{url}\n")
         try:
             response_single, status = request(url, token=parsed.token, insecure=parsed.insecure)
             response.extend(response_single);
