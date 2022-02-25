@@ -60,3 +60,7 @@ def test_check_cond_other(pod_base, pod_condition_other, pod_containers):
     pod_base["status"]["conditions"] = pod_condition_other
     pod_base["status"]["containerStatuses"] = pod_containers
     assert check_pods([pod_base]).output.state == NaemonState.WARNING
+
+def test_check_succeeded(pod_full):
+    pod_full["status"]["phase"] = "Succeeded"
+    assert check_pods([pod_full]).output.state == NaemonState.OK
