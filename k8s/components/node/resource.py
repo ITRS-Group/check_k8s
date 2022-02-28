@@ -23,7 +23,7 @@ class Node(Resource):
             return NaemonStatus(
                 NaemonState.WARNING,
                 self.perf.UNSCHEDULABLE,
-                "Node {} is ready, but unschedulable".format(self.meta["name"])
+                "Node {} is ready, but unschedulable".format(self.meta["name"]),
             )
         elif cnd_type == "Ready":
             if cnd_status == "True":

@@ -7,7 +7,7 @@ from k8s.consts import (
     PERFDATA_SEPARATOR,
     RESULT_SUCCESS,
     RESULT_CRITICAL,
-    RESULT_WARNING
+    RESULT_WARNING,
 )
 
 Output = namedtuple("Output", ["state", "message", "channel"])
@@ -56,7 +56,7 @@ class Result:
         message = "{0}\n{conditions}|{perfdata}\n".format(
             summary,
             conditions="\n".join(self._messages[state]),
-            perfdata=PERFDATA_SEPARATOR.join(self.perfdata)
+            perfdata=PERFDATA_SEPARATOR.join(self.perfdata),
         )
         return Output(state, message, channel)
 

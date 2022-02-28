@@ -16,7 +16,7 @@ def build_url(host, port, resource, is_core=True, namespace=None):
     """
 
     path_base = "api/v1" if is_core else "apis/apps/v1"
-    path_parts = ["namespaces", namespace, resource] if namespace else (resource, )
+    path_parts = ["namespaces", namespace, resource] if namespace else (resource,)
     path_full = re.sub(r"/+", "/", os.path.join(path_base, *path_parts).rstrip("/"))
 
     return "https://{0}:{1}/{2}".format(host, port, path_full)

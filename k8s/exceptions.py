@@ -1,6 +1,3 @@
-from k8s.consts import NaemonState
-
-
 class ApplicationError(Exception):
     def __init__(self, message, **meta):
         if not meta:
@@ -23,4 +20,3 @@ class StatusNotFound(ApplicationError):
 
 class ConditionsNotFound(ApplicationError):
     pass
-

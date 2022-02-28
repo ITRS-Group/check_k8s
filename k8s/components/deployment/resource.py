@@ -23,7 +23,7 @@ class Deployment(Resource):
             self._status.get("replicas", 0),
             self._status.get("readyReplicas", 0),
             self._status.get("updatedReplicas", 0),
-            self._status.get("availableReplicas", 0)
+            self._status.get("availableReplicas", 0),
         )
 
     def _get_status(self, cnd_type, cnd_status):

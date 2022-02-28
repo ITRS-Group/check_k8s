@@ -28,7 +28,9 @@ class Pod(Resource):
     def __init__(self, data, *args, **kwargs):
         super(Pod, self).__init__(data, *args, **kwargs)
 
-        self.containers = [Container(c) for c in self._status.get("containerStatuses", [])]
+        self.containers = [
+            Container(c) for c in self._status.get("containerStatuses", [])
+        ]
         self.phase = Phase(self._status["phase"])
 
     def _get_status(self, cnd_type, cnd_status):
@@ -36,7 +38,9 @@ class Pod(Resource):
             return NaemonStatus(
                 NaemonState.CRITICAL,
                 self.perf.UNAVAILABLE,
-                "Unexpected Phase for {kind} {name}: {0}".format(self.phase.value, **self.meta)
+                "Unexpected Phase for {kind} {name}: {0}".format(
+                    self.phase.value, **self.meta
+                ),
             )
         elif cnd_type in STATUSES:
             if cnd_status == "True":

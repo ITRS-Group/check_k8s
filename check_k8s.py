@@ -25,30 +25,36 @@ def main():
     response = []
     urls = []
     if parsed.namespace is not None:
-      for i in parsed.namespace.split(","):
+        for i in parsed.namespace.split(","):
 
-        # Build URL using input arguments
-        urls.append(build_url(
-            host=parsed.host,
-            port=parsed.port,
-            resource=parsed.resource,
-            is_core=is_core,
-            namespace=i
-        ))
+            # Build URL using input arguments
+            urls.append(
+                build_url(
+                    host=parsed.host,
+                    port=parsed.port,
+                    resource=parsed.resource,
+                    is_core=is_core,
+                    namespace=i,
+                )
+            )
     else:
-      # Build URL using input arguments
-      urls.append(build_url(
-          host=parsed.host,
-          port=parsed.port,
-          resource=parsed.resource,
-          is_core=is_core,
-          namespace=None
-      ))
-      # Request and check health data
+        # Build URL using input arguments
+        urls.append(
+            build_url(
+                host=parsed.host,
+                port=parsed.port,
+                resource=parsed.resource,
+                is_core=is_core,
+                namespace=None,
+            )
+        )
+    # Request and check health data
     try:
         for url in urls:
-            response_single, status = request(url, token=parsed.token, insecure=parsed.insecure)
-            response.extend(response_single);
+            response_single, status = request(
+                url, token=parsed.token, insecure=parsed.insecure
+            )
+            response.extend(response_single)
         output = health_check(response).output
         if not isinstance(output, Output):
             raise TypeError("Unknown health check format")
@@ -57,7 +63,7 @@ def main():
         output = Output(
             NaemonState.UNKNOWN,
             "{0}: {1}".format(e.code, body.get("message")),
-            sys.stdout
+            sys.stdout,
         )
     except URLError as e:
         output = Output(NaemonState.UNKNOWN, e.reason, sys.stdout)

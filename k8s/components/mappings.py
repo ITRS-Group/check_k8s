@@ -12,5 +12,5 @@ MAPPINGS = dict(
     # resource_name, (check_func, is_core)
     pods=(check_pods, True),
     nodes=(check_nodes, True),
-    deployments=(check_deployments, False)
+    deployments=(check_deployments, False),
 )

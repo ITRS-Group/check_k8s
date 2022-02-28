@@ -9,3 +9,5 @@ pre:
     poetry env info
     poetry install --no-interaction --no-root
     poetry run python3 -m pytest -v
+    poetry run flake8 check_k8s.py k8s
+    poetry run black --check check_k8s.py k8s

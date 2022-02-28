@@ -7,7 +7,7 @@ from k8s.exceptions import (
     MetaNotFound,
     ConditionsNotFound,
     StatusNotFound,
-    HealthUnknown
+    HealthUnknown,
 )
 
 from k8s.consts import NaemonState
@@ -33,7 +33,9 @@ class Resource(ABC):
 
         # Metadata
         if "metadata" not in data or not data["metadata"]:
-            raise MetaNotFound("Malformed response: metadata not found for kind {}".format(self._kind))
+            raise MetaNotFound(
+                "Malformed response: metadata not found for kind {}".format(self._kind)
+            )
 
         self.meta = dict(kind=self._kind, name=data["metadata"]["name"])
 
@@ -66,7 +68,9 @@ class Resource(ABC):
         """
 
         if "conditions" not in self._status or not len(self._status["conditions"]):
-            raise ConditionsNotFound("No conditions found, cannot check health", **self.meta)
+            raise ConditionsNotFound(
+                "No conditions found, cannot check health", **self.meta
+            )
 
         status_ok = None
 

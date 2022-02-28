@@ -25,8 +25,8 @@ opts = [
             "action": "store",
             "type": str,
             "default": Default.host.value,
-            "help": "Kubernetes host (default: %(default)s)"
-        }
+            "help": "Kubernetes host (default: %(default)s)",
+        },
     ),
     (
         "--port",
@@ -35,8 +35,8 @@ opts = [
             "action": "store",
             "type": int,
             "default": Default.port.value,
-            "help": "Kubernetes port (default: %(default)s)"
-        }
+            "help": "Kubernetes port (default: %(default)s)",
+        },
     ),
     (
         "--token",
@@ -46,8 +46,8 @@ opts = [
             "type": str,
             "nargs": "?",
             "default": Default.token.value,
-            "help": "Authentication Token"
-        }
+            "help": "Authentication Token",
+        },
     ),
     (
         "--token_file",
@@ -57,8 +57,8 @@ opts = [
             "type": str,
             "nargs": "?",
             "default": Default.token_file.value,
-            "help": "Read Token from file"
-        }
+            "help": "Read Token from file",
+        },
     ),
     (
         "--timeout",
@@ -67,8 +67,8 @@ opts = [
             "action": "store",
             "type": float,
             "default": Default.timeout.value,
-            "help": "Connection timeout in seconds (default: %(default)s)"
-        }
+            "help": "Connection timeout in seconds (default: %(default)s)",
+        },
     ),
     (
         "--insecure",
@@ -76,8 +76,8 @@ opts = [
             "dest": "insecure",
             "action": "store_true",
             "default": Default.insecure.value,
-            "help": "Continue on insecure SSL connection"
-        }
+            "help": "Continue on insecure SSL connection",
+        },
     ),
     (
         "--debug",
@@ -85,8 +85,8 @@ opts = [
             "dest": "debug",
             "action": "store_true",
             "default": Default.debug.value,
-            "help": "Enable debug mode"
-        }
+            "help": "Enable debug mode",
+        },
     ),
     (
         "--resource",
@@ -96,8 +96,8 @@ opts = [
             "type": str,
             "required": True,
             "help": "Resource to monitor",
-            "choices": list(MAPPINGS)
-        }
+            "choices": list(MAPPINGS),
+        },
     ),
     (
         "--namespace",
@@ -109,8 +109,8 @@ opts = [
             "default": Default.namespace.value,
             "required": False,
             "help": "Look only within this namespace",
-        }
-    )
+        },
+    ),
 ]
 
 

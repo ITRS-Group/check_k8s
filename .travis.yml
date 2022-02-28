@@ -2,6 +2,8 @@ language: python
 python:
   - "3.6"
 install:
-  - python3 -m pip install pytest
+  - python3 -m pip install pytest flake8 black
 script:
   - python3 -m pytest
+  - python3 -m flake8 check_k8s.py k8s
+  - python3 -m black --check check_k8s.py k8s
