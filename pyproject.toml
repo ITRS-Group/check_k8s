@@ -11,7 +11,7 @@ python = "^3.6.8"
 [tool.poetry.dev-dependencies]
 twine = "^1.15"
 pytest = "^7.0.1"
-pytest-cov = "^2.8.1"
+pytest-cov = "^3.0.0"
 codecov = "^2.1.12"
 black = "^22.1.0"
 flake8 = "^4.0.1"
