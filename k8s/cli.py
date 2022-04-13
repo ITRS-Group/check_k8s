@@ -116,7 +116,7 @@ opts = [
         "--version",
         {
             "action": "version",
-            "version":"%(prog)s {}".format(VERSION),
+            "version": "%(prog)s {}".format(VERSION),
         },
     ),
 ]

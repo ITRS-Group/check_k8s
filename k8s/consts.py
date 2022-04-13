@@ -9,6 +9,7 @@ RESULT_WARNING = "One or more warnings encountered"
 
 VERSION = "1.0"
 
+
 class NaemonState(Enum):
     OK = 0
     WARNING = 1
