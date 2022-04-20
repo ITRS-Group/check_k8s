@@ -1,10 +1,9 @@
 import argparse
+import importlib_metadata as metadata
 
 from enum import Enum
 
 from .components import MAPPINGS
-from k8s.consts import VERSION
-
 
 class Default(Enum):
     timeout = 15.0
@@ -112,13 +111,6 @@ opts = [
             "help": "Look only within this namespace",
         },
     ),
-    (
-        "--version",
-        {
-            "action": "version",
-            "version": "%(prog)s {}".format(VERSION),
-        },
-    ),
 ]
 
 
@@ -130,6 +122,10 @@ def parse_cmdline(args):
     for opt, conf in opts:
         parser.add_argument(opt, **conf)
 
+    version = "%(prog)s {}".format(get_version())
+    parser.add_argument('--version', action='version',
+        version = version)
+
     parsed = parser.parse_args(args)
 
     if parsed.token and parsed.token_file:
@@ -139,3 +135,6 @@ def parse_cmdline(args):
             parsed.token = fh.read().strip()
 
     return parsed
+
+def get_version():
+    return metadata.version('check_k8s')
