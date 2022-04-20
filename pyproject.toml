@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "check_k8s"
-version = "1.0.0"
+version = "0.1.0"
 description = "Kubernetes monitoring plugin"
 authors = ["Robert Wikman <rwikman@op5.com>"]
 license = "GPL-2.0"
