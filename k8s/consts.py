@@ -7,6 +7,8 @@ RESULT_SUCCESS = "All checks were successful"
 RESULT_CRITICAL = "One or more errors encountered"
 RESULT_WARNING = "One or more warnings encountered"
 
+VERSION = "1.0.0"
+
 
 class NaemonState(Enum):
     OK = 0

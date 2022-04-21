@@ -34,6 +34,7 @@ optional arguments:
                         Resource to monitor
   --namespace NAMESPACE
                         Look only within this namespace
+  --version             show program's version number and exit
 
 ```
 

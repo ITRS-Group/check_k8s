@@ -3,6 +3,7 @@ import argparse
 from enum import Enum
 
 from .components import MAPPINGS
+from k8s.consts import VERSION
 
 
 class Default(Enum):
@@ -109,6 +110,13 @@ opts = [
             "default": Default.namespace.value,
             "required": False,
             "help": "Look only within this namespace",
+        },
+    ),
+    (
+        "--version",
+        {
+            "action": "version",
+            "version": "%(prog)s {}".format(VERSION),
         },
     ),
 ]
