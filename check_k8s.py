@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
+from pickle import TRUE
 import sys
 import logging
 import traceback
 import json
+import re
 
 from urllib.error import URLError, HTTPError
 
@@ -56,8 +58,20 @@ def main():
             )
             response.extend(response_single)
         output = health_check(response).output
+
         if not isinstance(output, Output):
             raise TypeError("Unknown health check format")
+
+        # Remove resource results from message when matched with the 
+        # provided expression 
+        if (parsed.expressions):
+            expressions = parsed.expressions.split(",")
+            lines = output.message.splitlines(True)
+            state = lines[0]
+            lines[:] = [line for line in lines[1:]
+                        if not is_ignored_resource(line, expressions)]
+            output = output._replace(message=state + "".join(lines))
+
     except HTTPError as e:
         body = json.loads(e.read().decode("utf8"))
         output = Output(
@@ -76,6 +90,15 @@ def main():
     msg = NAGIOS_MSG.format(state=output.state.name, message=output.message)
     output.channel.write(msg)
     sys.exit(output.state.value)
+
+
+def is_ignored_resource(line, expressions):
+    word = line.split()
+    for expression in expressions:
+        found = re.search(expression, word[1])
+        if (found):
+            return True
+    return False
 
 
 if __name__ == "__main__":

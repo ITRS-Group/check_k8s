@@ -34,6 +34,7 @@ def test_opts():
     assert parser(["--timeout", "123.0"]).timeout == 123.0
     assert parser(["--port", "1234"]).port == 1234
     assert parser(["--token", "token123"]).token == "token123"
+    assert parser(["--ignore", "IgnoreResource"]).expressions == "IgnoreResource"
     assert parser([]).debug is Default.debug.value
     assert parser([]).insecure is Default.insecure.value
     assert parser([]).timeout is Default.timeout.value
