@@ -59,10 +59,13 @@ def main():
         if not isinstance(output, Output):
             raise TypeError("Unknown health check format")
     except HTTPError as e:
-        body = json.loads(e.read().decode("utf8"))
+        try:
+            msg = json.loads(e.read().decode("utf8")).get("message")
+        except json.JSONDecodeError:
+            msg = e.reason
         output = Output(
             NaemonState.UNKNOWN,
-            "{0}: {1}".format(e.code, body.get("message")),
+            "{0}: {1}".format(e.code, msg),
             sys.stdout,
         )
     except URLError as e:
