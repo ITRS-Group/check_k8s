@@ -94,9 +94,9 @@ def main():
 
 
 def is_ignored_resource(line, expressions):
-    word = line.split()
+    word = re.search(r"\S+:{1}", line)
     for expression in expressions:
-        found = re.search(expression, word[1])
+        found = re.search(expression, word.group())
         if found:
             return True
     return False
