@@ -62,8 +62,8 @@ def main():
         if not isinstance(output, Output):
             raise TypeError("Unknown health check format")
 
-        # Remove resource results from message when matched with the 
-        # provided expression 
+        # Remove resource results from message when matched with the
+        # provided expression
         if (parsed.expressions):
             expressions = parsed.expressions.split(",")
             lines = output.message.splitlines(True)
