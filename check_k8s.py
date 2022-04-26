@@ -64,12 +64,13 @@ def main():
 
         # Remove resource results from message when matched with the
         # provided expression
-        if (parsed.expressions):
+        if parsed.expressions:
             expressions = parsed.expressions.split(",")
             lines = output.message.splitlines(True)
             state = lines[0]
-            lines[:] = [line for line in lines[1:]
-                        if not is_ignored_resource(line, expressions)]
+            lines[:] = [
+                line for line in lines[1:] if not is_ignored_resource(line, expressions)
+            ]
             output = output._replace(message=state + "".join(lines))
 
     except HTTPError as e:
@@ -96,7 +97,7 @@ def is_ignored_resource(line, expressions):
     word = line.split()
     for expression in expressions:
         found = re.search(expression, word[1])
-        if (found):
+        if found:
             return True
     return False
 
