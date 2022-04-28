@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from pickle import TRUE
 import sys
 import logging
 import traceback
@@ -14,6 +13,9 @@ from k8s.cli import parse_cmdline
 from k8s.http import build_url, request
 from k8s.consts import NAGIOS_MSG, NaemonState
 from k8s.result import Output
+
+
+resource_pattern = re.compile(r"\S+:{1}")
 
 
 def main():
@@ -65,13 +67,17 @@ def main():
         # Remove resource results from message when matched with the
         # provided expression
         if parsed.expressions:
-            expressions = parsed.expressions.split(",")
+            expression_patterns = []
+            for expression in parsed.expressions:
+                expression_patterns.append(re.compile(expression))
+
             lines = output.message.splitlines(True)
-            state = lines[0]
-            lines[:] = [
-                line for line in lines[1:] if not is_ignored_resource(line, expressions)
+            lines[1:] = [
+                line
+                for line in lines[1:]
+                if not is_ignored_resource(line, expression_patterns)
             ]
-            output = output._replace(message=state + "".join(lines))
+            output = output._replace(message="".join(lines))
 
     except HTTPError as e:
         body = json.loads(e.read().decode("utf8"))
@@ -94,10 +100,11 @@ def main():
 
 
 def is_ignored_resource(line, expressions):
-    word = re.search(r"\S+:{1}", line)
+    word = re.search(resource_pattern, line)
     for expression in expressions:
         found = re.search(expression, word.group())
         if found:
+            logging.debug("Ignoring results for " + word.group())
             return True
     return False
 

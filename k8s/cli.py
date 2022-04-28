@@ -117,9 +117,8 @@ opts = [
         "--ignore",
         {
             "dest": "expressions",
-            "action": "store",
+            "action": "append",
             "type": str,
-            "nargs": "?",
             "default": Default.ignore.value,
             "required": False,
             "help": "Comma delimited list of expressons to match against \
