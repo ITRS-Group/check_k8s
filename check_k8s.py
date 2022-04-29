@@ -12,6 +12,7 @@ from k8s.cli import parse_cmdline
 from k8s.http import build_url, request
 from k8s.consts import NAGIOS_MSG, NaemonState
 from k8s.result import Output
+from k8s.ignore import remove_ignored
 
 
 def main():
@@ -56,8 +57,15 @@ def main():
             )
             response.extend(response_single)
         output = health_check(response).output
+
         if not isinstance(output, Output):
             raise TypeError("Unknown health check format")
+
+        # Remove resource results from message when matched with the
+        # provided expression
+        if parsed.expressions:
+            lines = remove_ignored(output.message, parsed.expressions)
+            output = output._replace(message="".join(lines))
     except HTTPError as e:
         body = json.loads(e.read().decode("utf8"))
         output = Output(
