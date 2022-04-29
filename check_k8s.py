@@ -13,9 +13,7 @@ from k8s.cli import parse_cmdline
 from k8s.http import build_url, request
 from k8s.consts import NAGIOS_MSG, NaemonState
 from k8s.result import Output
-
-
-resource_pattern = re.compile(r"\S+:{1}")
+from k8s.ignore import remove_ignored
 
 
 def main():
@@ -67,18 +65,8 @@ def main():
         # Remove resource results from message when matched with the
         # provided expression
         if parsed.expressions:
-            expression_patterns = []
-            for expression in parsed.expressions:
-                expression_patterns.append(re.compile(expression))
-
-            lines = output.message.splitlines(True)
-            lines[1:] = [
-                line
-                for line in lines[1:]
-                if not is_ignored_resource(line, expression_patterns)
-            ]
+            lines = remove_ignored(output.message, parsed.expressions)
             output = output._replace(message="".join(lines))
-
     except HTTPError as e:
         body = json.loads(e.read().decode("utf8"))
         output = Output(
@@ -97,16 +85,6 @@ def main():
     msg = NAGIOS_MSG.format(state=output.state.name, message=output.message)
     output.channel.write(msg)
     sys.exit(output.state.value)
-
-
-def is_ignored_resource(line, expressions):
-    word = re.search(resource_pattern, line)
-    for expression in expressions:
-        found = re.search(expression, word.group())
-        if found:
-            logging.debug("Ignoring results for " + word.group())
-            return True
-    return False
 
 
 if __name__ == "__main__":

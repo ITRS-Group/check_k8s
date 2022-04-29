@@ -121,8 +121,9 @@ opts = [
             "type": str,
             "default": Default.ignore.value,
             "required": False,
-            "help": "Comma delimited list of expressons to match against \
-                        the resource name to ignore",
+            "help": "Regular Expression to match against\
+                    the resource names to ignore in the check results.\
+                    Can be invoked multiple times.",
         },
     ),
     (
