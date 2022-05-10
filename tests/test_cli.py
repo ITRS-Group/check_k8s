@@ -2,6 +2,7 @@ import pytest
 
 from k8s.cli import parse_cmdline, Default
 
+
 def test_resource_valid():
     assert parse_cmdline(["--resource", "nodes"]).resource == "nodes"
     assert parse_cmdline(["--resource", "deployments"]).resource == "deployments"
@@ -33,7 +34,6 @@ def test_opts():
     assert parser(["--timeout", "123.0"]).timeout == 123.0
     assert parser(["--port", "1234"]).port == 1234
     assert parser(["--token", "token123"]).token == "token123"
-    assert parser(["--ignore", "IgnoreResource", "--ignore", "IgnoreResourceAgain"]).expressions == ["IgnoreResource", "IgnoreResourceAgain"]
     assert parser([]).debug is Default.debug.value
     assert parser([]).insecure is Default.insecure.value
     assert parser([]).timeout is Default.timeout.value
