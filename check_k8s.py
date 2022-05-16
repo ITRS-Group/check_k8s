@@ -3,7 +3,6 @@
 import sys
 import logging
 import traceback
-import json
 
 from urllib.error import URLError, HTTPError
 
