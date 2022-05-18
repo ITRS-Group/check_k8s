@@ -78,10 +78,7 @@ def make_requests(urls, parsed, health_check):
 
 
 def handle_http_error(e):
-    msg = ""
     try:
-        msg = json.loads(e.read().decode("utf8")).get("message")
+        return json.loads(e.read().decode("utf8")).get("message")
     except json.JSONDecodeError:
-        msg = e.reason
-
-    return msg
+        return e.reason
