@@ -55,7 +55,7 @@ def main():
                 url, token=parsed.token, insecure=parsed.insecure
             )
             response.extend(response_single)
-        output = health_check(response).output
+        output = health_check(response, parsed.expressions).output
         if not isinstance(output, Output):
             raise TypeError("Unknown health check format")
     except HTTPError as e:
