@@ -17,6 +17,7 @@ class Default(Enum):
     namespace = None
     resource = None
     ignore = None
+    selector = None
 
 
 opts = [
@@ -124,6 +125,17 @@ opts = [
             "help": "Regular Expression to match against\
                     the resource names to ignore in the check results.\
                     Can be invoked multiple times.",
+        },
+    ),
+    (
+        "--selector",
+        {
+            "dest": "selector",
+            "action": "store",
+            "type": str,
+            "default": Default.selector.value,
+            "required": False,
+            "help": "Label selector query to be used.",
         },
     ),
     (
