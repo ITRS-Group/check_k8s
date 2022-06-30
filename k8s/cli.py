@@ -16,6 +16,8 @@ class Default(Enum):
     debug = False
     namespace = None
     resource = None
+    ignore = None
+    selector = None
 
 
 opts = [
@@ -110,6 +112,30 @@ opts = [
             "default": Default.namespace.value,
             "required": False,
             "help": "Look only within this namespace",
+        },
+    ),
+    (
+        "--ignore",
+        {
+            "dest": "expressions",
+            "action": "append",
+            "type": str,
+            "default": Default.ignore.value,
+            "required": False,
+            "help": "Regular Expression to match against\
+                    the resource names to ignore in the check results.\
+                    Can be invoked multiple times.",
+        },
+    ),
+    (
+        "--selector",
+        {
+            "dest": "selector",
+            "action": "store",
+            "type": str,
+            "default": Default.selector.value,
+            "required": False,
+            "help": "Label selector query to be used.",
         },
     ),
     (

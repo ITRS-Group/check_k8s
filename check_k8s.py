@@ -34,6 +34,7 @@ def main():
                     resource=parsed.resource,
                     is_core=is_core,
                     namespace=i,
+                    labelSelector=parsed.selector,
                 )
             )
     else:
@@ -45,6 +46,7 @@ def main():
                 resource=parsed.resource,
                 is_core=is_core,
                 namespace=None,
+                labelSelector=parsed.selector,
             )
         )
     # Request and check health data

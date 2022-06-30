@@ -672,3 +672,23 @@ def deployment_full(deployment_base, deployment_conditions, deployment_replicas_
     deployment_base["status"]["conditions"] = deployment_conditions
     deployment_base["status"].update(deployment_replicas_minimal)
     return deployment_base
+
+
+@pytest.fixture
+def ignore_none():
+    return []
+
+
+@pytest.fixture
+def ignore_all_node(node_base):
+    return [node_base["metadata"]["name"]]
+
+
+@pytest.fixture
+def ignore_all_deployment(deployment_base):
+    return [deployment_base["metadata"]["name"]]
+
+
+@pytest.fixture
+def ignore_all_pod(pod_base):
+    return [pod_base["metadata"]["name"]]

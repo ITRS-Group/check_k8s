@@ -3,7 +3,7 @@ from k8s.result import Result
 from .resource import Node
 
 
-def check_nodes(items):
+def check_nodes(items, expressions):
     """Checks the health of the provided Nodes
 
     Documentation:
@@ -14,4 +14,4 @@ def check_nodes(items):
     :return: Nodes health summary
     """
 
-    return Result(Node, items)
+    return Result(Node, items, expressions)

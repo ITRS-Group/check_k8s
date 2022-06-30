@@ -34,11 +34,15 @@ def test_opts():
     assert parser(["--timeout", "123.0"]).timeout == 123.0
     assert parser(["--port", "1234"]).port == 1234
     assert parser(["--token", "token123"]).token == "token123"
+    assert parser(["--ignore", "IgnoreResource", "--ignore", "IgnoreResourceAgain"]).expressions == ["IgnoreResource", "IgnoreResourceAgain"]
+    assert parser(["--selector", "test"]).selector == "test"
     assert parser([]).debug is Default.debug.value
     assert parser([]).insecure is Default.insecure.value
     assert parser([]).timeout is Default.timeout.value
     assert parser([]).port is Default.port.value
     assert parser([]).host is Default.host.value
+    assert parser([]).expressions is Default.ignore.value
+    assert parser([]).selector is Default.selector.value
 
 
 def test_token_file():
