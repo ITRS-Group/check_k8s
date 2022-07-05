@@ -3,7 +3,6 @@ import os
 import json
 import ssl
 import urllib.request
-from k8s.result import Output
 import urllib.parse
 
 
@@ -66,24 +65,3 @@ def request(*args, insecure=False, **kwargs):
 
     resp = urllib.request.urlopen(req, **urlopen_opts)
     return json.loads(resp.read().decode("utf-8")).get("items"), resp.getcode()
-
-
-def make_requests(urls, parsed, health_check):
-    response = []
-    output = ""
-    for url in urls:
-        response_single, status = request(
-            url, token=parsed.token, insecure=parsed.insecure
-        )
-        response.extend(response_single)
-    output = health_check(response).output
-    if not isinstance(output, Output):
-        raise TypeError("Unknown health check format")
-    return output
-
-
-def handle_http_error(e):
-    try:
-        return json.loads(e.read().decode("utf8")).get("message")
-    except json.JSONDecodeError:
-        return e.reason

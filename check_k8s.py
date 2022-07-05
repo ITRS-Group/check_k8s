@@ -3,12 +3,13 @@
 import sys
 import logging
 import traceback
+import json
 
 from urllib.error import URLError, HTTPError
 
 from k8s.components import MAPPINGS
 from k8s.cli import parse_cmdline
-from k8s.http import build_url, handle_http_error, make_requests
+from k8s.http import build_url, request
 from k8s.consts import NAGIOS_MSG, NaemonState
 from k8s.result import Output
 
@@ -21,7 +22,7 @@ def main():
 
     health_check, is_core = MAPPINGS[parsed.resource]
 
-    output = []
+    response = []
     urls = []
     if parsed.namespace is not None:
         for i in parsed.namespace.split(","):
@@ -51,12 +52,19 @@ def main():
         )
     # Request and check health data
     try:
-        output = make_requests(urls, parsed, health_check)
+        for url in urls:
+            response_single, status = request(
+                url, token=parsed.token, insecure=parsed.insecure
+            )
+            response.extend(response_single)
+        output = health_check(response, parsed.expressions).output
+        if not isinstance(output, Output):
+            raise TypeError("Unknown health check format")
     except HTTPError as e:
-        msg = handle_http_error(e)
+        body = json.loads(e.read().decode("utf8"))
         output = Output(
             NaemonState.UNKNOWN,
-            "{0}: {1}".format(e.code, msg),
+            "{0}: {1}".format(e.code, body.get("message")),
             sys.stdout,
         )
     except URLError as e:
