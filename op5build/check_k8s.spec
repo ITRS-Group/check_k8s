@@ -10,7 +10,7 @@ License: GPLv2
 Group: op5/system-addons
 URL: https://www.itrsgroup.com
 Prefix: /opt/plugins
-Requires: python3
+Requires: python3.9
 Requires: op5-monitor-user
 Source: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}
