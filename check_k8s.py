@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/opt/monitor/op5/check_k8s/venv/bin/python
 
 import sys
 import logging
