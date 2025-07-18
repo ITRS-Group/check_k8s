@@ -1,14 +1,13 @@
-# Makefile for building RPM packages for check_k8s
-# This Makefile supports building for different Enterprise Linux versions
+# Makefile for building and testing check_k8s
 
 # Extract version from Python module
 version := $(shell python3 -c 'from k8s import __version__; print(__version__)')
 name := monitor-plugin-check_k8s
-python_ver := 3.12
+python_ver ?= 3.9
 
 help:
 	@echo "\n%% check_aws dev tools %%"
-	@echo "Usage: make <target>"
+	@echo "Usage: make <target> [python_ver=X.Y]"
 	@echo ""
 	@echo "Available targets:"
 	@echo "- deps:      install build dependencies"
@@ -67,13 +66,6 @@ wheels: .wheels-stamp
 	touch .poetry-update-stamp
 
 update: .poetry-update-stamp
-
-# Build RPM package
-rpm: .deps-stamp .wheels-stamp op5build/check_k8s.spec
-	rm -rf RPM
-	mkdir -p RPM/{BUILD,RPMS,SOURCES,SRPMS}  # Create RPM build directories
-	{ git ls-files; find dist; } | xargs tar --transform 's#^#$(name)-$(version)/#' -czf RPM/SOURCES/$(name)-$(version).tar.gz
-	rpmbuild -v op5build/check_k8s.spec --define "_topdir `pwd`/RPM" -bb --clean --define "dist el8" --define "el8 1" --define "op5version $(version)" --define "op5release 1"
 
 # Clean up build artifacts and temporary files
 clean:
