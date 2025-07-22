@@ -2,9 +2,9 @@ pre:
   steps: |
     set -ex
     cd src
-    make test   # Run tests to ensure everything is working before building
-    make lint   # Run linting to ensure code quality
-    make wheels # Build the Python wheels
+    make test    # Run tests to ensure everything is working before building
+    make lint    # Run linting to ensure code quality
+    make wheels  # Build the Python wheels
 
 post:
   steps: |

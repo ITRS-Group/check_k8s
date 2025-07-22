@@ -1,8 +1,8 @@
 %define exec_path check_k8s.py
-%define app_install_path /opt/monitor/op5/check_k8s
+%define app_install_path %{prefix}/check_k8s
 
 # Disable automatic dependency detection for venv paths
-%global __requires_exclude ^/opt/monitor/op5/check_k8s/venv/.*$
+%global __requires_exclude ^/opt/plugins/check_k8s/.*$
 
 Summary: Kubernetes plugin for Nagios
 Name: monitor-plugin-check_k8s
@@ -36,25 +36,25 @@ Nagios plugin for monitoring Kubernetes Clusters, built using the Python standar
 %{__install} -m 0644 op5build/check_k8s.metadata %buildroot%prefix/metadata/
 
 %pre
-# Remove old wheels directory created by previous versions
+# Remove old install and wheels directories created by previous versions
 %{__rm} -rf %{prefix}/k8s || :
+%{__rm} -rf /opt/monitor/op5/check_k8s || :
+%{__rm} -rf %{app_install_path}/wheels || :
 
 %post
 cd %{app_install_path}
-# Remove old venv
-%{__rm} -rf venv
 # Create a new venv
-python3.12 -m venv venv
+python3.12 -m venv .
 # First install the pip version that was used in the build
-venv/bin/pip install --upgrade -f wheels --no-index --no-deps pip
+bin/pip install --upgrade -f wheels --no-index --no-deps pip
 # Then install all the remaining packages
-venv/bin/pip install --upgrade --no-index wheels/*.whl
+bin/pip install --upgrade --no-index wheels/*.whl
 # Remove the wheels directory, no longer needed
 %{__rm} -rf wheels
 
 %files
-%{app_install_path}
-%{prefix}
+%{prefix}/%{exec_path}
+%{app_install_path}/wheels
 %dir %attr(0755,-,-) %prefix/metadata/
 %prefix/metadata/check_k8s.metadata
 %license LICENSE
@@ -64,6 +64,8 @@ venv/bin/pip install --upgrade --no-index wheels/*.whl
 rm -rf %buildroot
 
 %changelog
+* Fri Jul 18 2025 Jerick Macario <jmacario@itrsgroup.com>
+- Restructure app locations to plugins directory.
 * Tue Jul 15 2025 Jerick Macario <jmacario@itrsgroup.com>
 - Update Python version to 3.12 and the dependencies.
 - Change execution to run under venv
