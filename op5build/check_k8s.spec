@@ -4,6 +4,9 @@
 # Disable automatic dependency detection for venv paths
 %global __requires_exclude ^/opt/plugins/check_k8s/.*$
 
+# Define Python interpreter for byte-code compilation
+%global __python3 %{app_install_path}/bin/python -I
+
 Summary: Kubernetes plugin for Nagios
 Name: monitor-plugin-check_k8s
 Version: %{op5version}

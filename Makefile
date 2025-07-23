@@ -60,4 +60,6 @@ clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +             # Remove Python cache directories
 	find . -type f -name "*.py[co]" -delete                        # Remove compiled Python files
 	rm -rf .venv                                                   # Remove virtual environments
-	rm -f .*-stamp
+	rm -f .*-stamp                                                 # Remove build stamps
+	rm -rf dist/                                                   # Remove built wheels
+	rm -rf .pytest_cache/                                          # Remove pytest cache

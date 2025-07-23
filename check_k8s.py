@@ -1,4 +1,4 @@
-#!/opt/plugins/check_k8s/bin/python -I
+#!/usr/bin/env python3
 
 from k8s.__main__ import main
 
