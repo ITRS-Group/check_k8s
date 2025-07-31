@@ -2,12 +2,10 @@ pre:
   steps: |
     set -ex
     cd src
-    python3.9 -m venv .venv  # poetry will find and use .venv
-    source .venv/bin/activate
-    pip install --upgrade pip
-    pip install poetry
-    poetry env info
-    poetry install --no-interaction --no-root
-    poetry run python3 -m pytest -v
-    poetry run flake8 check_k8s.py k8s
-    poetry run black --check check_k8s.py k8s
+    make test    # Run tests to ensure everything is working before building
+    make lint    # Run linting to ensure code quality
+    make wheels  # Build the Python wheels
+
+post:
+  steps: |
+    /opt/plugins/check_k8s.py --help
