@@ -4,8 +4,6 @@
 # Disable automatic dependency detection for venv paths
 %global __requires_exclude ^/opt/plugins/check_k8s/.*$
 
-# Define Python interpreter for byte-code compilation
-%global __python3 %{app_install_path}/bin/python -I
 
 Summary: Kubernetes plugin for Nagios
 Name: monitor-plugin-check_k8s
@@ -48,10 +46,11 @@ Nagios plugin for monitoring Kubernetes Clusters, built using the Python standar
 cd %{app_install_path}
 # Create a new venv
 python3.12 -m venv .
+source bin/activate
 # First install the pip version that was used in the build
-bin/pip install --upgrade -f wheels --no-index --no-deps pip
+pip install --upgrade -f wheels --no-index --no-deps pip
 # Then install all the remaining packages
-bin/pip install --upgrade --no-index wheels/*.whl
+pip install --upgrade --no-index wheels/*.whl
 # Remove the wheels directory, no longer needed
 %{__rm} -rf wheels
 
