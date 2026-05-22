@@ -12,6 +12,8 @@ from k8s.exceptions import (
 
 from k8s.consts import NaemonState
 
+from k8s.buffer import is_within_buffer_time
+
 
 class NaemonStatus:
     def __init__(self, state, perfkey=None, msg_override=None):
@@ -26,10 +28,11 @@ class Resource(ABC):
         UNAVAILABLE = "unavailable"
         DEGRADED = "degraded"
 
-    def __init__(self, data, kind=None):
+    def __init__(self, data, kind=None, buffer_time=0.0):
         # Custom kind, in case we want to use `Resource` directly
         self._kind = kind or self.__class__.__name__
         self._data = data
+        self._buffer_time = buffer_time
 
         # Metadata
         if "metadata" not in data or not data["metadata"]:
@@ -38,6 +41,7 @@ class Resource(ABC):
             )
 
         self.meta = dict(kind=self._kind, name=data["metadata"]["name"])
+        self.labels = data["metadata"]["labels"]
 
         # Status
         if "status" not in data or not data["status"]:
@@ -84,10 +88,15 @@ class Resource(ABC):
 
             if status.state == NaemonState.OK:
                 # Only store last successful condition
-                status_ok = message, status
+                status_ok = message, status, self.labels
             else:
-                # Immediately return if an issue was encountered
-                return message, status
+                # Immediately return if an issue was encountered and it will be considered OK if it's still within buffer time
+                if is_within_buffer_time(cnd["lastTransitionTime"], self._buffer_time):
+                    status.state = NaemonState.OK
+                    message += " (considered OK due within buffer time)"
+                    return message, status, self.labels
+                else:
+                    return message, status, self.labels
 
         if not status_ok:
             raise HealthUnknown(

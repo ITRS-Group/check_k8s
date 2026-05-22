@@ -18,6 +18,8 @@ class Default(Enum):
     resource = None
     ignore = None
     selector = None
+    buffer_time = 0.0
+    group_by_label = None
 
 
 opts = [
@@ -136,6 +138,27 @@ opts = [
             "default": Default.selector.value,
             "required": False,
             "help": "Label selector query to be used.",
+        },
+    ),
+    (
+        "--buffer_time",
+        {
+            "dest": "buffer_time",
+            "action": "store",
+            "type": float,
+            "default": Default.buffer_time.value,
+            "help": "Buffer time that is considered OK if resource is not normal (default: %(default)s)",
+        },
+    ),
+    (
+        "--group_by_label",
+        {
+            "dest": "group_by_label",
+            "action": "store",
+            "type": str,
+            "default": Default.group_by_label.value,
+            "required": False,
+            "help": "Group resource by label",
         },
     ),
     (

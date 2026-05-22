@@ -4,13 +4,13 @@ from k8s.consts import NaemonState
 
 
 def test_perfkey_available(deployment_full):
-    _, status = Deployment(deployment_full).condition
+    _, status, _ = Deployment(deployment_full).condition
     assert status.perfkey == Deployment.PerfMap.AVAILABLE
 
 
 def test_perfkey_degraded(deployment_full, deployment_replicas_degraded):
     deployment_full["status"].update(deployment_replicas_degraded)
-    _, status = Deployment(deployment_full).condition
+    _, status, _ = Deployment(deployment_full).condition
     assert status.perfkey == Deployment.PerfMap.DEGRADED
 
 

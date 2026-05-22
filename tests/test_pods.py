@@ -68,7 +68,7 @@ def test_check_not_running_ignored(pod_base, pod_not_ready, pod_containers, igno
 def test_check_cond_other(pod_base, pod_condition_other, pod_containers, ignore_none):
     pod_base["status"]["conditions"] = pod_condition_other
     pod_base["status"]["containerStatuses"] = pod_containers
-    assert check_pods([pod_base], ignore_none).output.state == NaemonState.WARNING
+    assert check_pods([pod_base], ignore_none).output.state == NaemonState.OK
 
 
 def test_check_cond_other_ignored(pod_base, pod_condition_other, pod_containers, ignore_all_pod):

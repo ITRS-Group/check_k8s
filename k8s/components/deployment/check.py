@@ -3,7 +3,7 @@ from k8s.result import Result
 from .resource import Deployment
 
 
-def check_deployments(items, expressions):
+def check_deployments(items, expressions, buffer_time=0.0):
     """Checks the health of the provided Deployments
 
     Documentation:
@@ -14,4 +14,4 @@ def check_deployments(items, expressions):
     :return: Deployments health summary
     """
 
-    return Result(Deployment, items, expressions)
+    return Result(Deployment, items, expressions, buffer_time)

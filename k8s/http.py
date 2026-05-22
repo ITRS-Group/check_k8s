@@ -76,7 +76,7 @@ def make_requests(urls, parsed, health_check):
             url, token=parsed.token, insecure=parsed.insecure
         )
         response.extend(response_single)
-    output = health_check(response, parsed.expressions).output
+    output = health_check(response, parsed.expressions, parsed.buffer_time, parsed.group_by_label).output
     if not isinstance(output, Output):
         raise TypeError("Unknown health check format")
     return output

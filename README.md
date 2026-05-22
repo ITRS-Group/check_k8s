@@ -18,6 +18,7 @@ usage: check_k8s.py [-h] [--host HOST] [--token TOKEN]
                     [--timeout TIMEOUT] [--insecure] [--debug] --resource
                     {pods,nodes,deployments} [--namespace NAMESPACE]
                     [--ignore EXPRESSIONS] [--selector SELECTOR]
+                    [--buffer_time BUFFER_TIME]
                     [--version]
 
 Checks health of a Kubernetes cluster
@@ -40,6 +41,8 @@ optional arguments:
                         names to ignore in the check results. Can be
                         invoked multiple times.
   --selector SELECTOR   Label selector query to be used.
+  --buffer_time         Buffer time that is considered OK if resource is not normal (default: 0)
+  --group_by_label      Group resource by label
   --version             show program's version number and exit
 
 ```
