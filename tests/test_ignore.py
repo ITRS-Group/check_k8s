@@ -62,5 +62,5 @@ def test_ignore_all(caplog):
 def test_ignore_all_regex(caplog):
     caplog.set_level(logging.DEBUG)
     caplog.clear()
-    count = ignore_from_list(message, ["\S*"]) 
+    count = ignore_from_list(message, [r"\S*"]) 
     assert count == 5
