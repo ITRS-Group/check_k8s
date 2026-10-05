@@ -1,6 +1,6 @@
 from enum import Enum
 
-STATUSES = ["Ready", "Initialized", "PodScheduled", "ContainersReady"]
+STATUSES = ["Ready", "Initialized", "PodScheduled", "ContainersReady", "PodReadyToStartContainers"]
 
 
 class ContainerState(Enum):
